@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import type { DragEvent, PointerEvent } from 'react';
+
 
 export type Metric = {
   id: string;
@@ -406,20 +406,13 @@ export const DashboardView: FC<DashboardViewProps> = ({ visibility, isMaster }) 
       ) : null}
       <div
         ref={gridRef}
-        className="grid grid-cols-1 gap-6 md:grid-cols-12"
-        style={{ gridAutoRows: `${GRID_ROW_HEIGHT}px` }}
+
         onDragLeave={handleDragLeave}
       >
         {visibleLayout.map((item) => (
           <div
             key={item.id}
-            className={`group relative ${
-              dragOverId === item.id && isMaster ? 'ring-2 ring-sky-400/70 ring-offset-2 ring-offset-white' : ''
-            }`}
-            style={{
-              gridColumn: `span ${item.w} / span ${item.w}`,
-              gridRow: `span ${item.h} / span ${item.h}`,
-            }}
+
             onDragOver={handleDragOver(item.id)}
             onDrop={handleDrop(item.id)}
           >
