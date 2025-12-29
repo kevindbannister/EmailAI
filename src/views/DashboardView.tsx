@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import type { DragEvent } from 'react';
 
 
 export type Metric = {
@@ -269,7 +270,7 @@ export const DashboardView: FC<DashboardViewProps> = ({ visibility, isMaster }) 
     });
   };
 
-  const handleResizeStart = (id: string) => (event: PointerEvent<HTMLButtonElement>) => {
+  const handleResizeStart = (id: string) => (event: React.PointerEvent<HTMLButtonElement>) => {
     if (!isMaster || !gridRef.current) {
       return;
     }
