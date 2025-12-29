@@ -205,7 +205,6 @@ const App = () => {
             visibility={featureVisibility}
             isMaster={isMaster}
             isLayoutEditingEnabled={isLayoutEditingEnabled}
-            onToggleLayoutEditing={() => setIsLayoutEditingEnabled((prev) => !prev)}
           />
         );
       case 'settings':
@@ -241,7 +240,14 @@ const App = () => {
   };
 
   if (!session) {
-    return <LoginView onLogin={handleLogin} error={loginError} />;
+    return (
+      <LoginView
+        onLogin={handleLogin}
+        error={loginError}
+        isDragAndDropEnabled={isLayoutEditingEnabled}
+        onToggleDragAndDrop={() => setIsLayoutEditingEnabled((prev) => !prev)}
+      />
+    );
   }
 
   const handleToggleFeature = (id: string) => {

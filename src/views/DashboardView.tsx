@@ -171,15 +171,9 @@ interface DashboardViewProps {
   visibility: Record<string, boolean>;
   isMaster: boolean;
   isLayoutEditingEnabled: boolean;
-  onToggleLayoutEditing?: () => void;
 }
 
-export const DashboardView: FC<DashboardViewProps> = ({
-  visibility,
-  isMaster,
-  isLayoutEditingEnabled,
-  onToggleLayoutEditing,
-}) => {
+export const DashboardView: FC<DashboardViewProps> = ({ visibility, isMaster, isLayoutEditingEnabled }) => {
   const maxTrendValue = Math.max(...automationTrend.map((point) => point.value));
   const gridRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState<LayoutItem[]>(() => loadLayout());
@@ -417,26 +411,10 @@ export const DashboardView: FC<DashboardViewProps> = ({
   return (
     <div className="space-y-4 text-slate-800 dark:text-slate-200">
       {isMaster ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-dashed border-sky-200 bg-sky-50/70 px-4 py-3 text-sm text-slate-600 dark:border-slate-700/70 dark:bg-slate-900/60 dark:text-slate-300">
-          <span>
-            {canEditLayout
-              ? 'Layout editing is enabled. Drag tiles by the handle and resize from the lower-right corner.'
-              : 'Layout editing is disabled. Toggle it on to rearrange dashboard tiles.'}
-          </span>
-          {onToggleLayoutEditing ? (
-            <button
-              type="button"
-              onClick={onToggleLayoutEditing}
-              aria-pressed={isLayoutEditingEnabled}
-              className={`inline-flex min-w-[96px] items-center justify-center rounded-full px-3 py-1 text-xs font-semibold transition ${
-                isLayoutEditingEnabled
-                  ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30'
-                  : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200'
-              }`}
-            >
-              {isLayoutEditingEnabled ? 'Enabled' : 'Disabled'}
-            </button>
-          ) : null}
+        <div className="rounded-3xl border border-dashed border-sky-200 bg-sky-50/70 px-4 py-3 text-sm text-slate-600 dark:border-slate-700/70 dark:bg-slate-900/60 dark:text-slate-300">
+          {canEditLayout
+            ? 'Layout editing is enabled. Drag tiles by the handle and resize from the lower-right corner.'
+            : 'Layout editing is disabled. Re-enable it from the master login screen.'}
         </div>
       ) : null}
       <div
