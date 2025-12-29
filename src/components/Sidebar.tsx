@@ -24,16 +24,6 @@ export const Sidebar: FC<SidebarProps> = ({ currentTab, onSelectTab, mobileOpen,
   const content = (
     <div className="flex h-full flex-col gap-6 p-4">
       <div>
-        <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Manage organization</p>
-        <div className="mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
-          <label className="text-xs text-slate-500 dark:text-slate-400">Organization</label>
-          <select className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-            <option>Fyxer Consulting</option>
-            <option>Atlas Advisory</option>
-          </select>
-        </div>
-      </div>
-      <div>
         <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Settings</p>
         <div className="mt-3 space-y-1">
           {tabs.map((tab) => (
