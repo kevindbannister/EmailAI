@@ -1,6 +1,6 @@
-import { decryptToken, encryptToken } from '../utils/crypto.js';
+import { decrypt, encrypt } from '../utils/crypto.js';
 import { microsoftOAuthConfig } from '../config/microsoft.js';
-import { getOauthAccountByUser, updateOauthTokens } from '../db/oauthAccounts.js';
+import { getOauthAccountByUser, markOauthAccountReauthRequired, updateOauthTokens } from '../db/oauthAccounts.js';
 import { refreshMicrosoftToken } from '../services/microsoftAuth.js';
 import axios from 'axios';
 
@@ -15,27 +15,31 @@ export const ensureValidAccessToken = async ({ userId, provider }) => {
   const account = await getOauthAccountByUser({ userId, provider });
   if (!account) return { status: 'not_connected' };
 
-  const accessToken = decryptToken(account.access_token);
-  const refreshToken = decryptToken(account.refresh_token);
+  if (account.requires_reauth) {
+    return { status: 'reauth_required' };
+  }
+
+  const accessToken = decrypt(account.access_token);
+  const refreshToken = decrypt(account.refresh_token);
 
   if (!isExpired(account.expires_at)) {
     return { status: 'connected', accessToken };
   }
 
   if (!refreshToken) {
-    return { status: 'token_expired' };
+    await markOauthAccountReauthRequired({ accountId: account.id });
+    return { status: 'reauth_required' };
   }
 
   try {
     // Refresh the access token when it has expired to keep API calls seamless.
     const refreshed = await refreshMicrosoftToken({ refreshToken });
     const expiresAt = new Date(Date.now() + refreshed.expires_in * 1000).toISOString();
-    const encryptedAccessToken = encryptToken(refreshed.access_token);
-    const encryptedRefreshToken = refreshed.refresh_token ? encryptToken(refreshed.refresh_token) : null;
+    const encryptedAccessToken = encrypt(refreshed.access_token);
+    const encryptedRefreshToken = refreshed.refresh_token ? encrypt(refreshed.refresh_token) : null;
 
     await updateOauthTokens({
-      userId,
-      provider,
+      accountId: account.id,
       accessToken: encryptedAccessToken,
       refreshToken: encryptedRefreshToken,
       expiresAt,
@@ -44,6 +48,7 @@ export const ensureValidAccessToken = async ({ userId, provider }) => {
 
     return { status: 'connected', accessToken: refreshed.access_token };
   } catch (error) {
+    await markOauthAccountReauthRequired({ accountId: account.id });
     return { status: 'reauth_required' };
   }
 };

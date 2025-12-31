@@ -1,7 +1,7 @@
 import express from 'express';
 import { buildMicrosoftAuthUrl, exchangeCodeForToken, extractTenantId, fetchMicrosoftUserProfile } from '../services/microsoftAuth.js';
 import { createOAuthState, verifyOAuthState } from '../utils/oauthState.js';
-import { encryptToken } from '../utils/crypto.js';
+import { encrypt } from '../utils/crypto.js';
 import { upsertOauthAccount } from '../db/oauthAccounts.js';
 import { microsoftOAuthConfig } from '../config/microsoft.js';
 
@@ -14,15 +14,16 @@ const getUserIdFromRequest = (req) => {
   return req.query.user_id;
 };
 
-authMicrosoftRouter.get('/start', (req, res) => {
+authMicrosoftRouter.get('/start', async (req, res) => {
   const userId = getUserIdFromRequest(req);
+  const returnTo = req.query.returnTo;
 
   if (!userId) {
     return res.status(400).json({ error: 'Missing user_id for Microsoft OAuth start.' });
   }
 
   // The state value ties the external Microsoft redirect back to the current signed-in user.
-  const state = createOAuthState({ userId });
+  const state = await createOAuthState({ userId, returnTo });
   const authUrl = buildMicrosoftAuthUrl({ state });
 
   // Redirect the user to Microsoft's consent page for the required Graph scopes.
@@ -36,8 +37,8 @@ authMicrosoftRouter.get('/callback', async (req, res) => {
     return res.status(400).json({ error: 'Missing OAuth code or state.' });
   }
 
-  const verifiedState = verifyOAuthState(state);
-  if (!verifiedState?.userId) {
+  const verifiedState = await verifyOAuthState(state);
+  if (!verifiedState?.user_id) {
     return res.status(401).json({ error: 'Invalid OAuth state.' });
   }
 
@@ -46,19 +47,21 @@ authMicrosoftRouter.get('/callback', async (req, res) => {
     const tokenResponse = await exchangeCodeForToken({ code });
     const expiresAt = new Date(Date.now() + tokenResponse.expires_in * 1000).toISOString();
 
-    const encryptedAccessToken = encryptToken(tokenResponse.access_token);
-    const encryptedRefreshToken = tokenResponse.refresh_token ? encryptToken(tokenResponse.refresh_token) : null;
+    const encryptedAccessToken = encrypt(tokenResponse.access_token);
+    const encryptedRefreshToken = tokenResponse.refresh_token ? encrypt(tokenResponse.refresh_token) : null;
 
     // Fetch the user's profile to capture their primary email address.
     const profile = await fetchMicrosoftUserProfile({ accessToken: tokenResponse.access_token });
     const email = profile.mail || profile.userPrincipalName;
     const tenantId = extractTenantId(tokenResponse.id_token);
+    const providerAccountId = profile.id;
 
     // Store the tokens encrypted at rest and associate them with the internal user_id.
     await upsertOauthAccount({
-      userId: verifiedState.userId,
+      userId: verifiedState.user_id,
       provider: 'microsoft',
       email,
+      providerAccountId,
       tenantId,
       accessToken: encryptedAccessToken,
       refreshToken: encryptedRefreshToken,
@@ -66,7 +69,8 @@ authMicrosoftRouter.get('/callback', async (req, res) => {
       scope: tokenResponse.scope,
     });
 
-    return res.redirect(microsoftOAuthConfig.postAuthRedirect);
+    const redirectTo = verifiedState.return_to || microsoftOAuthConfig.postAuthRedirect;
+    return res.redirect(redirectTo);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to complete Microsoft OAuth flow.' });
   }

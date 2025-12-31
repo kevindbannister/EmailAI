@@ -1,21 +1,22 @@
 import crypto from 'node:crypto';
 
-const TOKEN_KEY = process.env.TOKEN_ENCRYPTION_KEY;
+const ENCRYPTION_KEY = process.env.APP_ENCRYPTION_KEY;
 
 const getEncryptionKey = () => {
-  if (!TOKEN_KEY) {
-    throw new Error('TOKEN_ENCRYPTION_KEY is required to encrypt OAuth tokens.');
+  if (!ENCRYPTION_KEY) {
+    throw new Error('APP_ENCRYPTION_KEY is required to encrypt OAuth tokens.');
   }
 
-  const key = Buffer.from(TOKEN_KEY, 'base64');
-  if (key.length !== 32) {
-    throw new Error('TOKEN_ENCRYPTION_KEY must be a base64-encoded 32-byte key.');
+  const keyBuffer =
+    ENCRYPTION_KEY.length >= 43 ? Buffer.from(ENCRYPTION_KEY, 'base64') : Buffer.from(ENCRYPTION_KEY, 'utf8');
+  if (keyBuffer.length !== 32) {
+    throw new Error('APP_ENCRYPTION_KEY must be 32 bytes (base64 or raw string).');
   }
 
-  return key;
+  return keyBuffer;
 };
 
-export const encryptToken = (value) => {
+export const encrypt = (value) => {
   const key = getEncryptionKey();
   const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
@@ -25,7 +26,7 @@ export const encryptToken = (value) => {
   return [iv.toString('base64'), tag.toString('base64'), encrypted.toString('base64')].join('.');
 };
 
-export const decryptToken = (payload) => {
+export const decrypt = (payload) => {
   if (!payload) return null;
   const [ivB64, tagB64, encryptedB64] = payload.split('.');
   if (!ivB64 || !tagB64 || !encryptedB64) {

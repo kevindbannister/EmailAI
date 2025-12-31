@@ -1,5 +1,5 @@
 import express from 'express';
-import { getOauthAccountByUser, deleteOauthAccount } from '../db/oauthAccounts.js';
+import { deleteOauthAccountById, getOauthAccountByUser, updateOauthAccountLastSyncAt } from '../db/oauthAccounts.js';
 import { ensureValidAccessToken, callMicrosoftGraph } from '../graph/client.js';
 
 export const integrationsMicrosoftRouter = express.Router();
@@ -31,7 +31,7 @@ integrationsMicrosoftRouter.get('/status', async (req, res) => {
       tenantId: account.tenant_id,
       expiresAt: account.expires_at,
       scope: account.scope,
-      lastSyncAt: null,
+      lastSyncAt: account.last_sync_at,
     });
   } catch (error) {
     return res.status(500).json({ status: 'error' });
@@ -44,7 +44,10 @@ integrationsMicrosoftRouter.post('/disconnect', async (req, res) => {
     return res.status(400).json({ error: 'Missing user_id.' });
   }
 
-  await deleteOauthAccount({ userId, provider: 'microsoft' });
+  const account = await getOauthAccountByUser({ userId, provider: 'microsoft' });
+  if (account) {
+    await deleteOauthAccountById({ accountId: account.id });
+  }
   return res.status(204).send();
 });
 
@@ -60,6 +63,10 @@ integrationsMicrosoftRouter.get('/test-connection', async (req, res) => {
       method: 'GET',
       url: '/me',
     });
+    const account = await getOauthAccountByUser({ userId, provider: 'microsoft' });
+    if (account) {
+      await updateOauthAccountLastSyncAt({ accountId: account.id });
+    }
 
     return res.json({ ok: true, email: profile.mail || profile.userPrincipalName });
   } catch (error) {
