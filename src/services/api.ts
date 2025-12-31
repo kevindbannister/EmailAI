@@ -26,6 +26,14 @@ export interface MicrosoftIntegrationStatus {
   lastSyncAt?: string | null;
 }
 
+export interface GoogleIntegrationStatus {
+  connected: boolean;
+  email?: string | null;
+  expires_at?: string | null;
+  requires_reauth?: boolean;
+  last_sync_at?: string | null;
+}
+
 export const getMicrosoftIntegrationStatus = async (userId: string): Promise<MicrosoftIntegrationStatus> => {
   const response = await fetch(`/integrations/microsoft/status?user_id=${encodeURIComponent(userId)}`);
   if (!response.ok) {
@@ -40,4 +48,28 @@ export const disconnectMicrosoftIntegration = async (userId: string): Promise<vo
 
 export const startMicrosoftOAuth = (userId: string): void => {
   window.location.href = `/auth/microsoft/start?user_id=${encodeURIComponent(userId)}`;
+};
+
+export const getGoogleIntegrationStatus = async (userId: string): Promise<GoogleIntegrationStatus> => {
+  const response = await fetch(`/integrations/google/status?user_id=${encodeURIComponent(userId)}`);
+  if (!response.ok) {
+    return { connected: false, requires_reauth: false };
+  }
+  return response.json();
+};
+
+export const disconnectGoogleIntegration = async (userId: string): Promise<void> => {
+  await fetch(`/integrations/google/disconnect?user_id=${encodeURIComponent(userId)}`, { method: 'POST' });
+};
+
+export const testGoogleIntegration = async (userId: string): Promise<{ ok: boolean; email?: string }> => {
+  const response = await fetch(`/integrations/google/test-connection?user_id=${encodeURIComponent(userId)}`);
+  if (!response.ok) {
+    return { ok: false };
+  }
+  return response.json();
+};
+
+export const startGoogleOAuth = (userId: string): void => {
+  window.location.href = `/auth/google/start?user_id=${encodeURIComponent(userId)}`;
 };
