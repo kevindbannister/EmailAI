@@ -11,6 +11,8 @@ interface TopNavProps {
   onToggleDarkMode: () => void;
   onLogout?: () => void;
   username?: string;
+  showFeatureToggles?: boolean;
+  onToggleFeaturePanel?: () => void;
 }
 
 export const TopNav: FC<TopNavProps> = ({
@@ -22,6 +24,8 @@ export const TopNav: FC<TopNavProps> = ({
   onToggleDarkMode,
   onLogout,
   username,
+  showFeatureToggles = false,
+  onToggleFeaturePanel,
 }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -221,7 +225,7 @@ export const TopNav: FC<TopNavProps> = ({
                 Log out
               </button>
             ) : null}
-            {showFeatureToggles ? (
+            {showFeatureToggles && onToggleFeaturePanel ? (
               <button
                 onClick={onToggleFeaturePanel}
                 className="flex w-full items-center justify-between rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:border-slate-700/70 dark:bg-slate-800/70 dark:text-slate-100"
