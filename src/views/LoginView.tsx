@@ -90,7 +90,7 @@ export const LoginView = ({
             {isLoading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
-        <div className="mt-6 rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-xs text-slate-500">
+        <div className="mt-6 rounded-lg border border-white/70 bg-white/70 px-4 py-3 text-xs text-slate-500">
           Use the master account to continue. Need help? Contact your administrator.
         </div>
       </div>
