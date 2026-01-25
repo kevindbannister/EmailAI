@@ -11,7 +11,7 @@ export type MetricTileProps = {
 export const MetricTile = ({ icon, title, value, description }: MetricTileProps) => {
   return (
     <GlassCard className="space-y-3" padding="md">
-      <div className="flex items-center gap-2 text-blue-500">{icon}</div>
+      <div className="accent-text flex items-center gap-2">{icon}</div>
       <div>
         <p className="text-sm font-semibold theme-text-primary">{title}</p>
         <div className="mt-2 flex items-baseline gap-2">

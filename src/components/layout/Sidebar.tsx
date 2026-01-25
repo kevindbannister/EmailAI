@@ -34,7 +34,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <span className="text-lg font-semibold">X</span>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-500">XProFlow</p>
+            <p className="accent-text text-xs font-semibold uppercase tracking-[0.2em]">XProFlow</p>
             <p className="text-base font-semibold theme-text-primary">Email Intelligence</p>
           </div>
         </div>
@@ -64,7 +64,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         <div className="panel-surface rounded-2xl border p-4 text-xs theme-text-secondary">
           <p className="font-medium theme-text-primary">Next sync</p>
-          <p className="mt-1 text-sm font-semibold text-blue-600">Today · 3:00 PM</p>
+          <p className="accent-text mt-1 text-sm font-semibold">Today · 3:00 PM</p>
           <p className="mt-3 text-xs theme-text-muted">3 accounts connected</p>
         </div>
       </aside>
