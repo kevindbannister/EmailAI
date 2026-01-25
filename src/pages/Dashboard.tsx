@@ -1,5 +1,4 @@
 import { Clock, Mail, PoundSterling } from 'lucide-react';
-import ActivityFeed from '../components/dashboard/ActivityFeed';
 import StatChip from '../components/dashboard/StatChip';
 import Card from '../components/ui/Card';
 
@@ -42,14 +41,6 @@ const MetricCard = ({ title, value, description }: MetricCardProps) => {
 };
 
 const Dashboard = () => {
-  const activityItems = [
-    { time: '01:11 PM', text: 'You are working in the XProFlow frontend.' },
-    { time: '01:24 PM', text: 'Follow /codex/WORKING_RULES.md.' },
-    { time: '01:32 PM', text: 'Implement ONLY the task below.' },
-    { time: '01:45 PM', text: 'Keep edits minimal.' },
-    { time: '02:02 PM', text: 'Output only changed files.' }
-  ];
-
   const kpiStats = [
     {
       value: '1,284',
@@ -183,10 +174,6 @@ const Dashboard = () => {
         </div>
       </Card>
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-slate-900">Today</h3>
-        <ActivityFeed items={activityItems} />
-      </div>
     </section>
   );
 };
