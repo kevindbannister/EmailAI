@@ -1,4 +1,5 @@
-import { Clock, Mail, PoundSterling } from 'lucide-react';
+import { Clock, Mail, PoundSterling, X } from 'lucide-react';
+import { useState } from 'react';
 import StatChip from '../components/dashboard/StatChip';
 import Card from '../components/ui/Card';
 
@@ -41,6 +42,12 @@ const MetricCard = ({ title, value, description }: MetricCardProps) => {
 };
 
 const Dashboard = () => {
+  const [showToneCard, setShowToneCard] = useState(() => {
+    if (typeof window === 'undefined') {
+      return true;
+    }
+    return localStorage.getItem('showToneCard') !== 'false';
+  });
   const kpiStats = [
     {
       value: '1,284',
@@ -74,7 +81,6 @@ const Dashboard = () => {
   return (
     <section className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-slate-900">Welcome back, Kev</h1>
         <div className="flex flex-wrap items-center gap-2">
           <StatChip label="1 week" />
           <StatChip label="167 words" />
@@ -82,20 +88,36 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <Card className="border-amber-200 bg-[#fff7db]">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold text-slate-900">Make XProFlow sound like you</h2>
-          <p className="text-sm text-slate-600">
-            Onboard your writing samples to teach XProFlow your tone, phrasing, and style
-            preferences so every response sounds authentically yours.
-          </p>
-          <div>
-            <button className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
-              Start now
+      {showToneCard ? (
+        <Card className="border-amber-200 bg-[#fff7db]">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-3">
+              <h2 className="text-lg font-semibold text-slate-900">
+                Make XProFlow sound like you
+              </h2>
+              <p className="text-sm text-slate-600">
+                Onboard your writing samples to teach XProFlow your tone, phrasing, and style
+                preferences so every response sounds authentically yours.
+              </p>
+              <div>
+                <button className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+                  Start now
+                </button>
+              </div>
+            </div>
+            <button
+              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/70 hover:text-slate-700"
+              aria-label="Dismiss tone setup card"
+              onClick={() => {
+                setShowToneCard(false);
+                localStorage.setItem('showToneCard', 'false');
+              }}
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
-        </div>
-      </Card>
+        </Card>
+      ) : null}
 
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-slate-900">Performance Summary</h2>

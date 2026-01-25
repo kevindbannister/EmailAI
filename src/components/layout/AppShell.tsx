@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
@@ -13,6 +13,8 @@ const AppShell = () => {
     }
     return localStorage.getItem('sidebarCollapsed') === 'true';
   });
+  const location = useLocation();
+  const topbarTitle = location.pathname === '/dashboard' ? 'Welcome back, Kev' : undefined;
 
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', String(sidebarCollapsed));
@@ -32,6 +34,7 @@ const AppShell = () => {
           onToggleTheme={() =>
             setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
           }
+          title={topbarTitle}
         />
         <main className="flex-1 space-y-6 px-8 py-8">
           <Outlet />

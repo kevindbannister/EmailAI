@@ -3,11 +3,13 @@ import { Bell, Moon, Search, Sun } from 'lucide-react';
 type TopbarProps = {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
+  title?: string;
 };
 
-const Topbar = ({ theme, onToggleTheme }: TopbarProps) => {
+const Topbar = ({ theme, onToggleTheme, title }: TopbarProps) => {
   return (
-    <header className="flex items-center justify-end border-b border-gray-200 bg-white px-8 py-4">
+    <header className="flex items-center justify-between border-b border-gray-200 bg-white px-8 py-4">
+      <div className="text-lg font-semibold text-slate-900">{title}</div>
       <div className="flex items-center gap-3">
         <button
           className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:text-gray-700"
