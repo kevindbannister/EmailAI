@@ -37,13 +37,13 @@ const EmailSetup = () => {
                 <th className="pb-3">Last Sync</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-blue-100/60">
+            <tbody className="table-divider">
               {connectedAccounts.map((account) => (
                 <tr key={account.id} className="text-sm">
                   <td className="py-3 font-medium theme-text-primary">{account.provider}</td>
                   <td className="py-3">{account.email}</td>
                   <td className="py-3">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+                    <span className="status-pill inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold">
                       <Check className="h-3 w-3" />
                       {account.status}
                     </span>
@@ -86,7 +86,7 @@ const EmailSetup = () => {
                 <p className="mt-1 text-xs theme-text-muted">{setting.description}</p>
               </div>
               <button className="relative h-6 w-11 rounded-full bg-blue-500 shadow-inner">
-                <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white" />
+                <span className="toggle-knob absolute right-1 top-1 h-4 w-4 rounded-full" />
               </button>
             </div>
           ))}

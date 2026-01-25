@@ -51,7 +51,7 @@ const DonutChartCard = ({ title, subtitle, data }: DonutChartCardProps) => {
               <span className="font-semibold theme-text-primary">{entry.value}%</span>
             </div>
           ))}
-          <div className="mt-2 rounded-2xl border border-blue-100/60 bg-blue-50/60 px-4 py-3 text-xs theme-text-muted">
+          <div className="info-panel mt-2 rounded-2xl border px-4 py-3 text-xs theme-text-muted">
             Awaiting Response, FYI, and Marketing are updated weekly.
           </div>
         </div>

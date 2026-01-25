@@ -33,7 +33,7 @@ const Topbar = ({ onMenuClick, theme, onToggleTheme }: TopbarProps) => {
           <Menu className="h-5 w-5" />
         </Button>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-500">XProFlow</p>
+          <p className="accent-text text-xs font-semibold uppercase tracking-[0.2em]">XProFlow</p>
           <h1 className="text-xl font-semibold theme-text-primary">Welcome back, Susan</h1>
         </div>
       </div>
@@ -76,7 +76,7 @@ const Topbar = ({ onMenuClick, theme, onToggleTheme }: TopbarProps) => {
             <a
               key={item.label}
               href={item.href}
-              className="block rounded-lg px-3 py-2 text-sm theme-text-secondary hover:bg-blue-50"
+              className="menu-link block rounded-lg px-3 py-2 text-sm theme-text-secondary"
             >
               {item.label}
             </a>

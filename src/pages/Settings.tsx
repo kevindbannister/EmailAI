@@ -65,8 +65,8 @@ const Settings = () => {
                     <span
                       className={
                         item.enabled
-                          ? 'absolute right-1 top-1 h-4 w-4 rounded-full bg-white'
-                          : 'absolute left-1 top-1 h-4 w-4 rounded-full bg-white'
+                          ? 'toggle-knob absolute right-1 top-1 h-4 w-4 rounded-full'
+                          : 'toggle-knob absolute left-1 top-1 h-4 w-4 rounded-full'
                       }
                     />
                   </button>
@@ -75,13 +75,13 @@ const Settings = () => {
             </div>
           </GlassCard>
 
-          <GlassCard padding="lg" className="space-y-4 border border-rose-200/70 bg-rose-50/60">
+          <GlassCard padding="lg" className="danger-surface space-y-4 border">
             <SectionTitle title="Danger zone" subtitle="Disconnect providers or reset automation." />
-            <div className="flex items-start gap-3 text-sm text-rose-700">
+            <div className="flex items-start gap-3 text-sm">
               <AlertTriangle className="mt-1 h-4 w-4" />
               <p>Disconnecting a provider stops syncing immediately. This is a placeholder action.</p>
             </div>
-            <Button variant="outline" className="border-rose-200 text-rose-600 hover:bg-rose-100">
+            <Button variant="outline" className="danger-button">
               Disconnect provider
             </Button>
           </GlassCard>

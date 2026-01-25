@@ -12,10 +12,10 @@ const Inbox = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Inbox</h1>
-            <p className="text-sm text-slate-300">Prioritize client requests with AI-supported triage.</p>
+            <h1 className="text-2xl font-semibold theme-text-primary">Inbox</h1>
+            <p className="text-sm theme-text-muted">Prioritize client requests with AI-supported triage.</p>
           </div>
-          <button className="rounded-full border border-slate-800 bg-slate-900 px-4 py-2 text-sm text-slate-200">
+          <button className="button-outline rounded-full border px-4 py-2 text-sm">
             New workflow
           </button>
         </div>
