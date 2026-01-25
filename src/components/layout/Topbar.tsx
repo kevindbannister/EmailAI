@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
 import { Bell, Moon, Search, Sun } from 'lucide-react';
+import { classNames } from '../../lib/utils';
 
 type TopbarProps = {
   theme: 'dark' | 'light';
@@ -7,16 +9,40 @@ type TopbarProps = {
 };
 
 const Topbar = ({ theme, onToggleTheme, title }: TopbarProps) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isSearchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [isSearchOpen]);
+
   return (
     <header className="flex items-center justify-between border-b border-gray-200 bg-white px-8 py-4">
       <div className="text-lg font-semibold text-slate-900">{title}</div>
       <div className="flex items-center gap-3">
-        <button
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:text-gray-700"
-          aria-label="Search"
-        >
-          <Search className="h-4 w-4" />
-        </button>
+        <div className="relative flex items-center">
+          <input
+            ref={searchInputRef}
+            type="search"
+            placeholder="Search"
+            className={classNames(
+              'absolute right-10 h-9 rounded-full border border-gray-200 bg-white px-4 text-sm text-gray-700 shadow-sm outline-none transition-all duration-300',
+              isSearchOpen
+                ? 'w-56 opacity-100'
+                : 'w-0 opacity-0 pointer-events-none border-transparent px-0 shadow-none'
+            )}
+          />
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:text-gray-700"
+            aria-label={isSearchOpen ? 'Close search' : 'Open search'}
+            onClick={() => setIsSearchOpen((prev) => !prev)}
+          >
+            <Search className="h-4 w-4" />
+          </button>
+        </div>
         <button
           className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:text-gray-700"
           aria-label="Notifications"
