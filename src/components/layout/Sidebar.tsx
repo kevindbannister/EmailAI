@@ -52,7 +52,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
             <NavLink
               key={item.label}
               to={item.to}
-              className={({ isActive }) =>
+              className={({ isActive }: { isActive: boolean }) =>
                 classNames(
                   'group relative flex items-center gap-3 rounded-lg border border-transparent py-2 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-900',
                   collapsed ? 'justify-center px-2' : 'px-3',
@@ -66,12 +66,16 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 )
               }
             >
-              <Icon className={classNames('h-4 w-4', isActive ? xProFlowBlue.text : '')} />
-              {!collapsed && <span>{item.label}</span>}
-              {collapsed && (
-                <span className="pointer-events-none absolute left-full top-1/2 ml-3 -translate-y-1/2 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100">
-                  {item.label}
-                </span>
+              {({ isActive }: { isActive: boolean }) => (
+                <>
+                  <Icon className={classNames('h-4 w-4', isActive ? xProFlowBlue.text : '')} />
+                  {!collapsed && <span>{item.label}</span>}
+                  {collapsed && (
+                    <span className="pointer-events-none absolute left-full top-1/2 ml-3 -translate-y-1/2 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100">
+                      {item.label}
+                    </span>
+                  )}
+                </>
               )}
             </NavLink>
           );
