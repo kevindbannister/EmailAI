@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Home, Mail, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, Home, Mail, Settings } from 'lucide-react';
 import { xProFlowBlue } from '../../lib/designTokens';
 import { classNames } from '../../lib/utils';
 import { xProFlowLogoDark, xProFlowLogoLight } from './logoAssets';
@@ -7,6 +7,7 @@ import { xProFlowLogoDark, xProFlowLogoLight } from './logoAssets';
 const navigation = [
   { label: 'Dashboard', to: '/dashboard', icon: Home },
   { label: 'Email Setup', to: '/email-setup', icon: Mail },
+  { label: 'Drafts', to: '/settings/drafts', icon: FileText },
   { label: 'Settings', to: '/settings', icon: Settings }
 ];
 

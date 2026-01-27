@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import Dashboard from './pages/Dashboard';
+import DraftSettings from './pages/DraftSettings';
 import EmailSetup from './pages/EmailSetup';
 import Settings from './pages/Settings';
 
@@ -12,6 +13,7 @@ const App = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="email-setup" element={<EmailSetup />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="settings/drafts" element={<DraftSettings />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>
