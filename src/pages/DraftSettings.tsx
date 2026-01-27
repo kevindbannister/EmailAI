@@ -1,21 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { classNames } from '../lib/utils';
 
 const DraftSettings = () => {
-  const [draftRepliesEnabled, setDraftRepliesEnabled] = useState(() => {
+  const [draftRepliesEnabled, setDraftRepliesEnabled] = useState(true);
+  const [draftPrompt, setDraftPrompt] = useState('');
+
+  useEffect(() => {
     if (typeof window === 'undefined') {
-      return true;
+      return;
     }
-    return window.localStorage.getItem('draftRepliesEnabled') !== 'false';
-  });
-  const [draftPrompt, setDraftPrompt] = useState(() => {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-    return window.localStorage.getItem('draftPrompt') ?? '';
-  });
+    setDraftRepliesEnabled(window.localStorage.getItem('draftRepliesEnabled') !== 'false');
+    setDraftPrompt(window.localStorage.getItem('draftPrompt') ?? '');
+  }, []);
 
   const handleSave = () => {
     if (typeof window === 'undefined') {
