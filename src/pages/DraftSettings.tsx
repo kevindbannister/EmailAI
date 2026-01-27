@@ -8,18 +8,21 @@ const DraftSettings = () => {
     if (typeof window === 'undefined') {
       return true;
     }
-    return localStorage.getItem('draftRepliesEnabled') !== 'false';
+    return window.localStorage.getItem('draftRepliesEnabled') !== 'false';
   });
   const [draftPrompt, setDraftPrompt] = useState(() => {
     if (typeof window === 'undefined') {
       return '';
     }
-    return localStorage.getItem('draftPrompt') ?? '';
+    return window.localStorage.getItem('draftPrompt') ?? '';
   });
 
   const handleSave = () => {
-    localStorage.setItem('draftRepliesEnabled', String(draftRepliesEnabled));
-    localStorage.setItem('draftPrompt', draftPrompt.trim());
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem('draftRepliesEnabled', String(draftRepliesEnabled));
+    window.localStorage.setItem('draftPrompt', draftPrompt.trim());
   };
 
   return (
