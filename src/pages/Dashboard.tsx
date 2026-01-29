@@ -1,19 +1,23 @@
 import { Clock, Mail, PoundSterling, X } from 'lucide-react';
 import { useState } from 'react';
 import Card from '../components/ui/Card';
-import { xProFlowBlue, xProFlowBlueChart } from '../lib/designTokens';
+import { xProFlowAccents, xProFlowBlue } from '../lib/designTokens';
 
 type KpiCardProps = {
   value: string;
   label: string;
   icon: JSX.Element;
+  accent?: {
+    iconBadge: string;
+    iconBadgeBorder: string;
+  };
 };
 
-const KpiCard = ({ value, label, icon }: KpiCardProps) => {
+const KpiCard = ({ value, label, icon, accent = xProFlowAccents.blue }: KpiCardProps) => {
   return (
     <Card className="flex items-center gap-4 p-4">
       <div
-        className={`${xProFlowBlue.iconBadge} ${xProFlowBlue.iconBadgeBorder} flex h-10 w-10 items-center justify-center rounded-xl`}
+        className={`${accent.iconBadge} ${accent.iconBadgeBorder} flex h-10 w-10 items-center justify-center rounded-xl`}
       >
         {icon}
       </div>
@@ -29,13 +33,16 @@ type MetricCardProps = {
   title: string;
   value: string;
   description: string;
+  accent?: {
+    chartDot: string;
+  };
 };
 
-const MetricCard = ({ title, value, description }: MetricCardProps) => {
+const MetricCard = ({ title, value, description, accent = xProFlowAccents.blue }: MetricCardProps) => {
   return (
     <Card className="space-y-2 p-4">
       <div className="flex items-center gap-2">
-        <span className={`h-2 w-2 rounded-full ${xProFlowBlue.chartDot}`} />
+        <span className={`h-2 w-2 rounded-full ${accent.chartDot}`} />
         <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</p>
       </div>
       <div>
@@ -57,24 +64,27 @@ const Dashboard = () => {
     {
       value: '1,284',
       label: 'Emails processed',
-      icon: <Mail className="h-4 w-4" />
+      icon: <Mail className="h-4 w-4" />,
+      accent: xProFlowAccents.blue
     },
     {
       value: '14h 32m',
       label: 'Time saved',
-      icon: <Clock className="h-4 w-4" />
+      icon: <Clock className="h-4 w-4" />,
+      accent: xProFlowAccents.teal
     },
     {
       value: '£1,284',
       label: 'Cost saved',
-      icon: <PoundSterling className="h-4 w-4" />
+      icon: <PoundSterling className="h-4 w-4" />,
+      accent: xProFlowAccents.amber
     }
   ];
 
   const emailMakeup = [
-    { label: 'Awaiting Response', value: 45, color: xProFlowBlueChart.primary },
-    { label: 'FYI', value: 33, color: xProFlowBlueChart.secondary },
-    { label: 'Marketing', value: 17, color: xProFlowBlueChart.tertiary }
+    { label: 'Awaiting Response', value: 45, color: xProFlowAccents.teal.chart },
+    { label: 'FYI', value: 33, color: xProFlowAccents.amber.chart },
+    { label: 'Marketing', value: 17, color: xProFlowAccents.violet.chart }
   ];
 
   const donutRadius = 56;
@@ -124,7 +134,13 @@ const Dashboard = () => {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {kpiStats.map((stat) => (
-            <KpiCard key={stat.label} value={stat.value} label={stat.label} icon={stat.icon} />
+            <KpiCard
+              key={stat.label}
+              value={stat.value}
+              label={stat.label}
+              icon={stat.icon}
+              accent={stat.accent}
+            />
           ))}
         </div>
       </div>
