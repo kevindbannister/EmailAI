@@ -47,11 +47,11 @@ function registerGoogleAuth(app) {
       const { email, name, id } = userInfoResponse.data || {};
 
       let scopesGranted = [];
-      if (tokens.access_token) {
+      if (tokens.scope) {
+        scopesGranted = tokens.scope.split(' ');
+      } else if (tokens.access_token) {
         const tokenInfo = await oauthClient.getTokenInfo(tokens.access_token);
         scopesGranted = tokenInfo.scopes || [];
-      } else if (tokens.scope) {
-        scopesGranted = tokens.scope.split(' ');
       }
 
       return res.json({
