@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
-import { getSupabaseClient } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 
 const AuthCallback = () => {
   useEffect(() => {
     const loadSession = async () => {
-      const supabase = getSupabaseClient();
       const { data, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Supabase auth callback error', error);
@@ -16,7 +15,7 @@ const AuthCallback = () => {
     void loadSession();
   }, []);
 
-  return null;
+  return <div className="p-6 text-sm text-slate-200">Completing Google sign-in…</div>;
 };
 
 export default AuthCallback;
