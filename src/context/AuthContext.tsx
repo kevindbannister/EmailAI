@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../lib/api';
+import { supabase } from '../lib/supabaseClient';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       gmailEmail,
       csrfToken,
       loginWithGoogle: () => {
-        window.location.assign('/auth/google');
+        void supabase.auth.signInWithOAuth({ provider: 'google' });
       },
       loginWithManual: () => {
         if (typeof window !== 'undefined') {
