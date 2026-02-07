@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../lib/api';
+import { getSupabaseClient } from '../lib/supabaseClient';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -7,7 +8,7 @@ type AuthContextValue = {
   gmailConnected: boolean;
   gmailEmail?: string;
   csrfToken?: string;
-  loginWithGoogle: () => void;
+  loginWithGoogle: () => Promise<void>;
   loginWithManual: () => void;
   logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
@@ -64,11 +65,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       gmailConnected,
       gmailEmail,
       csrfToken,
-      loginWithGoogle: () => {
-        void supabase.auth.signInWithOAuth({
+      loginWithGoogle: async () => {
+        console.log('Starting Supabase Google OAuth sign-in.');
+        const supabase = getSupabaseClient();
+        const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
-          options: { redirectTo: 'https://xproflow.com/auth/callback' }
+          options: { redirectTo: `${window.location.origin}/auth/callback` }
         });
+        if (error) {
+          console.error('Supabase Google OAuth sign-in failed.', error);
+          throw error;
+        }
       },
       loginWithManual: () => {
         if (typeof window !== 'undefined') {
