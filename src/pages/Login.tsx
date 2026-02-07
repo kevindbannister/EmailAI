@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
-  const { loginWithManual, loginWithGoogle } = useAuth();
+  const { loginWithManual } = useAuth();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -73,9 +74,7 @@ const Login = () => {
             <span className="bg-white px-2 dark:bg-slate-950">or</span>
           </div>
         </div>
-        <Button type="button" className="w-full" onClick={() => void loginWithGoogle()}>
-          Sign in with Google
-        </Button>
+        <GoogleSignInButton />
       </Card>
     </div>
   );
