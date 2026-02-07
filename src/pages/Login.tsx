@@ -11,6 +11,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const handleGoogleLogin = async () => {
+    console.log('Google sign-in button clicked.');
+    await loginWithGoogle();
+  };
+
   const handleManualLogin = () => {
     if (username.trim() === 'master' && password.trim() === 'master') {
       setError('');
@@ -61,10 +66,10 @@ const Login = () => {
             />
           </div>
           {error ? <p className="text-xs text-red-500">{error}</p> : null}
-          <Button type="button" className="w-full" onClick={handleManualLogin}>
-            Sign in with password
-          </Button>
-        </div>
+        <Button type="button" className="w-full" onClick={handleManualLogin}>
+          Sign in with password
+        </Button>
+      </div>
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-slate-200 dark:border-slate-800" />
@@ -73,7 +78,7 @@ const Login = () => {
             <span className="bg-white px-2 dark:bg-slate-950">or</span>
           </div>
         </div>
-        <Button type="button" className="w-full" onClick={() => void loginWithGoogle()}>
+        <Button type="button" className="w-full" onClick={handleGoogleLogin}>
           Sign in with Google
         </Button>
       </Card>
