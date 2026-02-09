@@ -93,39 +93,53 @@ function registerGmailRoutes(app, supabase) {
   const appBaseUrl = process.env.APP_BASE_URL || process.env.FRONTEND_URL || 'http://localhost:5173';
 
   app.get('/api/gmail/oauth/start', async (req, res) => {
-    console.log('Starting Gmail OAuth');
-    const user = await requireUser(req, res, supabase);
-    if (!user) {
-      return;
-    }
+    try {
+      console.log('Starting Gmail OAuth');
+      const user = await requireUser(req, res, supabase);
+      if (!user) {
+        return;
+      }
 
-    const { GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URI } = process.env;
-    if (!GOOGLE_CLIENT_ID) {
-      throw new Error('Missing GOOGLE_CLIENT_ID');
-    }
-    if (!GOOGLE_REDIRECT_URI) {
-      throw new Error('Missing GOOGLE_REDIRECT_URI');
-    }
+      const { GOOGLE_CLIENT_ID, GOOGLE_REDIRECT_URI } = process.env;
+      const missingVars = [];
+      if (!GOOGLE_CLIENT_ID) {
+        missingVars.push('GOOGLE_CLIENT_ID');
+      }
+      if (!GOOGLE_REDIRECT_URI) {
+        missingVars.push('GOOGLE_REDIRECT_URI');
+      }
+      if (missingVars.length > 0) {
+        console.error(
+          'Gmail OAuth start missing required environment variables:',
+          missingVars.join(', ')
+        );
+        res.status(500).json({ error: 'Missing Gmail OAuth configuration.' });
+        return;
+      }
 
-    const googleOAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-    googleOAuthUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID);
-    googleOAuthUrl.searchParams.set('redirect_uri', GOOGLE_REDIRECT_URI);
-    googleOAuthUrl.searchParams.set('response_type', 'code');
-    googleOAuthUrl.searchParams.set(
-      'scope',
-      [
-        'openid',
-        'email',
-        'profile',
-        'https://www.googleapis.com/auth/gmail.readonly'
-      ].join(' ')
-    );
-    googleOAuthUrl.searchParams.set('access_type', 'offline');
-    googleOAuthUrl.searchParams.set('prompt', 'consent');
-    googleOAuthUrl.searchParams.set('include_granted_scopes', 'true');
+      const googleOAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+      googleOAuthUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID);
+      googleOAuthUrl.searchParams.set('redirect_uri', GOOGLE_REDIRECT_URI);
+      googleOAuthUrl.searchParams.set('response_type', 'code');
+      googleOAuthUrl.searchParams.set(
+        'scope',
+        [
+          'openid',
+          'email',
+          'profile',
+          'https://www.googleapis.com/auth/gmail.readonly'
+        ].join(' ')
+      );
+      googleOAuthUrl.searchParams.set('access_type', 'offline');
+      googleOAuthUrl.searchParams.set('prompt', 'consent');
+      googleOAuthUrl.searchParams.set('include_granted_scopes', 'true');
 
-    console.log('Gmail OAuth URL:', googleOAuthUrl.toString());
-    res.redirect(googleOAuthUrl.toString());
+      console.log('Gmail OAuth URL:', googleOAuthUrl.toString());
+      res.redirect(googleOAuthUrl.toString());
+    } catch (error) {
+      console.error('Gmail OAuth start error:', error);
+      res.status(500).json({ error: 'Failed to start Gmail OAuth.' });
+    }
   });
 
   app.get('/api/gmail/oauth/callback', async (req, res) => {
