@@ -91,7 +91,9 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           }
           aria-label="Settings"
         >
-          <Settings className="h-5 w-5" strokeWidth={1.6} title="Settings" />
+          <span title="Settings" className="flex items-center justify-center">
+            <Settings className="h-5 w-5" strokeWidth={1.6} />
+          </span>
         </NavLink>
       </div>
     </aside>
