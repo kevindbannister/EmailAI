@@ -1,74 +1,42 @@
 import { NavLink } from 'react-router-dom';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  GitBranch,
-  Home,
-  ListChecks,
-  Plug,
-  Settings,
-  Tag
-} from 'lucide-react';
-import { xProFlowBlue } from '../../lib/designTokens';
+import { ChevronLeft, ChevronRight, Mail, Settings } from 'lucide-react';
+import { useUser } from '../../context/UserContext';
 import { classNames } from '../../lib/utils';
-import { xProFlowLogoDark, xProFlowLogoLight } from './logoAssets';
 
 const navigation = [
-  { label: 'Dashboard', to: '/dashboard', icon: Home },
-  { label: 'Onboarding', to: '/onboarding', icon: ListChecks },
-  { label: 'Labels', to: '/labels', icon: Tag },
-  { label: 'Rules', to: '/rules', icon: Filter },
-  { label: 'Integrations', to: '/integrations', icon: Plug },
-  { label: 'Workflows', to: '/workflows', icon: GitBranch },
-  { label: 'Drafts', to: '/settings/drafts', icon: Settings },
+  { label: 'Inbox', to: '/inbox', icon: Mail },
   { label: 'Settings', to: '/settings', icon: Settings }
 ];
-
-const secondaryLinks = ['Invite your team', 'Get a free month', 'Settings', 'Help'];
 
 type SidebarProps = {
   collapsed: boolean;
   onToggle: () => void;
-  theme: 'dark' | 'light';
 };
 
-const Sidebar = ({ collapsed, onToggle, theme }: SidebarProps) => {
-  const logoSrc = theme === 'dark' ? xProFlowLogoLight : xProFlowLogoDark;
+const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
+  const { user } = useUser();
   return (
     <aside
       className={classNames(
         'sidebar-surface fixed inset-y-0 left-0 z-40 flex flex-col border-r py-8 transition-all',
-        collapsed ? 'w-20 px-4' : 'w-72 px-6'
+        collapsed ? 'w-20 px-3' : 'w-20 px-3'
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className={classNames('space-y-2', collapsed ? 'text-center' : '')}>
-          <img
-            src={logoSrc}
-            alt="XProFlow"
-            className={classNames(
-              'object-contain',
-              collapsed ? 'h-8 w-8' : 'h-10 w-full max-w-[200px]'
-            )}
-          />
-          {!collapsed && (
-            <span className="inline-flex w-fit items-center rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
-              Basic
-            </span>
-          )}
-        </div>
-        <button
-          type="button"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          onClick={onToggle}
-          className="rounded-lg border border-slate-200 bg-white p-1 text-slate-600 transition hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
+      <div className="flex items-center justify-center">
+        <span className="text-lg font-semibold tracking-[0.3em] text-slate-900 dark:text-slate-100">
+          XPF
+        </span>
       </div>
+      <button
+        type="button"
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        onClick={onToggle}
+        className="sr-only"
+      >
+        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+      </button>
 
-      <nav className="mt-8 flex flex-1 flex-col gap-1">
+      <nav className="mt-8 flex flex-1 flex-col items-center gap-4">
         {navigation.map((item) => {
           const Icon = item.icon;
           return (
@@ -77,21 +45,26 @@ const Sidebar = ({ collapsed, onToggle, theme }: SidebarProps) => {
               to={item.to}
               className={({ isActive }: { isActive: boolean }) =>
                 classNames(
-                  'nav-link group relative flex items-center gap-3 rounded-lg border border-transparent py-2 text-sm font-medium transition',
-                  collapsed ? 'justify-center px-2' : 'px-3',
-                  isActive ? 'nav-link-active shadow-sm' : ''
+                  'group flex w-full flex-col items-center gap-2 rounded-2xl px-2 py-3 text-[11px] font-medium text-slate-500 transition',
+                  isActive
+                    ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100'
+                    : 'hover:bg-white/70 hover:text-slate-800 dark:hover:bg-slate-900/70 dark:hover:text-slate-100'
                 )
               }
             >
               {({ isActive }: { isActive: boolean }) => (
                 <>
-                  <Icon className={classNames('h-4 w-4', isActive ? 'text-current' : '')} />
-                  {!collapsed && <span>{item.label}</span>}
-                  {collapsed && (
-                    <span className="pointer-events-none absolute left-full top-1/2 ml-3 -translate-y-1/2 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100 dark:bg-slate-800">
-                      {item.label}
-                    </span>
-                  )}
+                  <span
+                    className={classNames(
+                      'flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300',
+                      isActive
+                        ? 'border-slate-300 bg-slate-900 text-white dark:border-slate-600 dark:bg-slate-100 dark:text-slate-900'
+                        : 'group-hover:border-slate-300 group-hover:text-slate-900 dark:group-hover:border-slate-600 dark:group-hover:text-slate-100'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span>{item.label}</span>
                 </>
               )}
             </NavLink>
@@ -99,37 +72,19 @@ const Sidebar = ({ collapsed, onToggle, theme }: SidebarProps) => {
         })}
       </nav>
 
-      {!collapsed && (
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-              Try XProFlow Pro
-            </p>
-            <p className="mt-2 text-xs text-slate-500 dark:text-slate-300">
-              Unlock advanced insights, custom automations, and priority support.
-            </p>
-            <button
-              className={classNames(
-                'mt-3 w-full rounded-full px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700',
-                xProFlowBlue.focusRing,
-                'bg-sky-600'
-              )}
-            >
-              Upgrade to Pro
-            </button>
-          </div>
-          <div className="flex flex-col gap-2">
-            {secondaryLinks.map((link) => (
-              <button
-                key={link}
-                className="text-left text-xs font-medium text-slate-500 transition hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-100"
-              >
-                {link}
-              </button>
-            ))}
-          </div>
+      <div className="mt-6 flex flex-col items-center gap-2 px-2 text-center">
+        <img
+          src={user.avatarUrl}
+          alt={`${user.name} avatar`}
+          className="h-10 w-10 rounded-2xl border border-white/60 object-cover shadow-sm dark:border-slate-900"
+        />
+        <div className="space-y-0.5">
+          <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">{user.name}</p>
+          {user.email && (
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">{user.email}</p>
+          )}
         </div>
-      )}
+      </div>
     </aside>
   );
 };

@@ -18,7 +18,7 @@ const AppShell = () => {
   const { user } = useUser();
   const firstName = user.name.split(' ')[0];
   const topbarTitle =
-    location.pathname === '/dashboard' ? `Welcome back, ${firstName}` : undefined;
+    location.pathname === '/inbox' ? `Welcome back, ${firstName}` : undefined;
 
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', String(sidebarCollapsed));
@@ -36,12 +36,9 @@ const AppShell = () => {
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed((current) => !current)}
-        theme={theme}
       />
       <div
-        className={`relative z-10 flex min-h-screen flex-1 flex-col ${
-          sidebarCollapsed ? 'ml-20' : 'ml-72'
-        }`}
+        className="relative z-10 flex min-h-screen flex-1 flex-col ml-20"
       >
         <Topbar
           theme={theme}
