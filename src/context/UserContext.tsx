@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabaseClient';
+import { getEmailAvatarUrl, getUserProfile } from '../lib/userProfile';
 
 type UserProfile = {
+  id: string;
   name: string;
   email: string;
-  avatarUrl?: string;
+  avatarUrl: string;
 };
 
 type UserContextValue = {
@@ -15,8 +17,10 @@ type UserContextValue = {
 };
 
 const defaultUser: UserProfile = {
-  name: 'Kevin Bannister',
-  email: 'kevin.bannister@xproflow.com'
+  id: 'local-user',
+  name: 'User',
+  email: '',
+  avatarUrl: getEmailAvatarUrl('')
 };
 
 const USER_STORAGE_KEY = 'emailai-user-profile';
@@ -26,17 +30,7 @@ const getSessionUserProfile = (session: Session | null): UserProfile | null => {
     return null;
   }
 
-  const metadata = session.user.user_metadata ?? {};
-  const email = session.user.email ?? defaultUser.email;
-  const name =
-    metadata.full_name ||
-    metadata.name ||
-    metadata.preferred_username ||
-    email.split('@')[0] ||
-    defaultUser.name;
-  const avatarUrl = metadata.avatar_url || metadata.picture || undefined;
-
-  return { name, email, avatarUrl };
+  return getUserProfile(session.user);
 };
 
 const getStoredUser = () => {
