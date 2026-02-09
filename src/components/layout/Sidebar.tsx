@@ -33,7 +33,6 @@ type SidebarProps = {
   theme: 'dark' | 'light';
   className?: string;
   showCollapseToggle?: boolean;
-  onNavigate?: () => void;
 };
 
 const Sidebar = ({
@@ -42,7 +41,6 @@ const Sidebar = ({
   theme,
   className,
   showCollapseToggle = true,
-  onNavigate
 }: SidebarProps) => {
   const logoSrc = theme === 'dark' ? xProFlowLogoLight : xProFlowLogoDark;
   return (
@@ -81,7 +79,7 @@ const Sidebar = ({
         ) : null}
       </div>
 
-      <SidebarNav items={navigation} collapsed={collapsed} onNavigate={onNavigate} />
+      <SidebarNav items={navigation} collapsed={collapsed} />
 
       {!collapsed && (
         <div className="space-y-4">

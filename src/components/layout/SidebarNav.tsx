@@ -11,10 +11,9 @@ export type SidebarNavItem = {
 type SidebarNavProps = {
   items: SidebarNavItem[];
   collapsed: boolean;
-  onNavigate?: () => void;
 };
 
-const SidebarNav = ({ items, collapsed, onNavigate }: SidebarNavProps) => (
+const SidebarNav = ({ items, collapsed }: SidebarNavProps) => (
   <nav className="mt-8 flex flex-1 flex-col gap-2">
     {items.map((item) => {
       const Icon = item.icon;
@@ -22,7 +21,6 @@ const SidebarNav = ({ items, collapsed, onNavigate }: SidebarNavProps) => (
         <NavLink
           key={item.label}
           to={item.to}
-          onClick={onNavigate}
           className={({ isActive }: { isActive: boolean }) =>
             classNames(
               'nav-link group relative flex items-center gap-3 border border-transparent text-sm font-medium transition',

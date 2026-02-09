@@ -76,7 +76,6 @@ const DashboardShell = () => {
         onToggle={() => undefined}
         theme={theme}
         showCollapseToggle={false}
-        onNavigate={() => setMobileSidebarOpen(false)}
         className={classNames(
           'sidebar-mobile bottom-0 left-0 top-0 z-50 w-72 shadow-2xl transition-transform md:hidden',
           mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
