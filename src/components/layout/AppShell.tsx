@@ -38,9 +38,7 @@ const AppShell = () => {
         onToggle={() => setSidebarCollapsed((current) => !current)}
       />
       <div
-        className={`relative z-10 flex min-h-screen flex-1 flex-col ${
-          sidebarCollapsed ? 'ml-16' : 'ml-56'
-        }`}
+        className="relative z-10 flex min-h-screen flex-1 flex-col ml-20"
       >
         <Topbar
           theme={theme}
