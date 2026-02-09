@@ -1,11 +1,11 @@
-import type { LucideIcon } from 'lucide-react';
+import type { ComponentType, SVGProps } from 'react';
 import { NavLink } from 'react-router-dom';
 import { classNames } from '../../lib/utils';
 
 type NavItem = {
   label: string;
   to: string;
-  icon: LucideIcon;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
 type SidebarNavProps = {
