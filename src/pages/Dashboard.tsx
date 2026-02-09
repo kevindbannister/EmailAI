@@ -1,222 +1,155 @@
-import { Clock, Mail, PoundSterling, X } from 'lucide-react';
-import { useState } from 'react';
+import { Search } from 'lucide-react';
 import Card from '../components/ui/Card';
-import { xProFlowAccents, xProFlowBlue } from '../lib/designTokens';
 
-type KpiCardProps = {
-  value: string;
-  label: string;
-  icon: JSX.Element;
-  accent?: {
-    iconBadge: string;
-    iconBadgeBorder: string;
-  };
+type InboxEmail = {
+  sender: string;
+  subject: string;
+  preview?: string;
+  time: string;
+  status: string;
+  statusStyle: string;
 };
 
-const KpiCard = ({ value, label, icon, accent = xProFlowAccents.blue }: KpiCardProps) => {
-  return (
-    <Card className="flex items-center gap-4 p-4">
-      <div
-        className={`${accent.iconBadge} ${accent.iconBadgeBorder} flex h-10 w-10 items-center justify-center rounded-xl`}
-      >
-        {icon}
-      </div>
-      <div>
-        <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">{value}</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
-      </div>
-    </Card>
-  );
-};
-
-type MetricCardProps = {
+type InboxGroup = {
   title: string;
-  value: string;
-  description: string;
-  accent?: {
-    chartDot: string;
-  };
+  emails: InboxEmail[];
 };
 
-const MetricCard = ({ title, value, description, accent = xProFlowAccents.blue }: MetricCardProps) => {
-  return (
-    <Card className="space-y-2 p-4">
-      <div className="flex items-center gap-2">
-        <span className={`h-2 w-2 rounded-full ${accent.chartDot}`} />
-        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</p>
-      </div>
-      <div>
-        <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400">{description}</p>
-      </div>
-    </Card>
-  );
-};
+const inboxGroups: InboxGroup[] = [
+  {
+    title: 'Today',
+    emails: [
+      {
+        sender: 'Lena Soto',
+        subject: 'Q4 operations review and staffing follow-up',
+        preview: 'Sharing the final headcount adjustments and onboarding timeline.',
+        time: '11:08 AM',
+        status: 'Active',
+        statusStyle: 'bg-emerald-100 text-emerald-700'
+      },
+      {
+        sender: 'XProFlow',
+        subject: 'Weekly inbox summary is ready',
+        preview: 'Take a quick look at what needs your attention before EOD.',
+        time: '9:42 AM',
+        status: 'Complete',
+        statusStyle: 'bg-sky-100 text-sky-700'
+      },
+      {
+        sender: 'Marcus Hill',
+        subject: 'Re: Vendor contract renewal',
+        preview: 'Attached the updated pricing table and our notes.',
+        time: '8:15 AM',
+        status: 'Replied',
+        statusStyle: 'bg-violet-100 text-violet-700'
+      }
+    ]
+  },
+  {
+    title: 'November 2023',
+    emails: [
+      {
+        sender: 'Priya Desai',
+        subject: 'Campaign launch assets (final)',
+        preview: 'Deliverables are in the shared folder with the final edits.',
+        time: 'Nov 28',
+        status: 'Read',
+        statusStyle: 'bg-slate-100 text-slate-700'
+      },
+      {
+        sender: 'Daniel Cho',
+        subject: 'Board deck review',
+        preview: 'Need feedback on slide 12 and the financial summary.',
+        time: 'Nov 26',
+        status: 'Draft',
+        statusStyle: 'bg-amber-100 text-amber-700'
+      },
+      {
+        sender: 'People Ops',
+        subject: 'Benefits enrollment reminder',
+        preview: 'Your selections are due Friday. Let us know if you need help.',
+        time: 'Nov 22',
+        status: 'Organized',
+        statusStyle: 'bg-teal-100 text-teal-700'
+      }
+    ]
+  },
+  {
+    title: 'October 2023',
+    emails: [
+      {
+        sender: 'Amelia Rhodes',
+        subject: 'Product feedback session recap',
+        preview: 'Summarizing the themes from the customer interviews.',
+        time: 'Oct 31',
+        status: 'Read',
+        statusStyle: 'bg-slate-100 text-slate-700'
+      },
+      {
+        sender: 'Finance Team',
+        subject: 'Expense approvals pending',
+        preview: 'There are three items waiting for your sign-off.',
+        time: 'Oct 27',
+        status: 'Active',
+        statusStyle: 'bg-emerald-100 text-emerald-700'
+      }
+    ]
+  }
+];
 
 const Dashboard = () => {
-  const [showToneCard, setShowToneCard] = useState(() => {
-    if (typeof window === 'undefined') {
-      return true;
-    }
-    return localStorage.getItem('showToneCard') !== 'false';
-  });
-  const kpiStats = [
-    {
-      value: '1,284',
-      label: 'Emails processed',
-      icon: <Mail className="h-4 w-4" />,
-      accent: xProFlowAccents.blue
-    },
-    {
-      value: '14h 32m',
-      label: 'Time saved',
-      icon: <Clock className="h-4 w-4" />,
-      accent: xProFlowAccents.teal
-    },
-    {
-      value: '£1,284',
-      label: 'Cost saved',
-      icon: <PoundSterling className="h-4 w-4" />,
-      accent: xProFlowAccents.amber
-    }
-  ];
-
-  const emailMakeup = [
-    { label: 'Awaiting Response', value: 45, color: xProFlowAccents.teal.chart },
-    { label: 'FYI', value: 33, color: xProFlowAccents.amber.chart },
-    { label: 'Marketing', value: 17, color: xProFlowAccents.violet.chart }
-  ];
-
-  const donutRadius = 56;
-  const donutStroke = 12;
-  const donutCircumference = 2 * Math.PI * donutRadius;
-  const donutTotal = emailMakeup.reduce((sum, item) => sum + item.value, 0);
-  let donutOffset = 0;
-
   return (
     <section className="space-y-6">
-      {showToneCard ? (
-        <Card className="!border-amber-200 !bg-[#fff7db] dark:!border-slate-800 dark:!bg-slate-900">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Make XProFlow sound like you
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                Onboard your writing samples to teach XProFlow your tone, phrasing, and style
-                preferences so every response sounds authentically yours.
-              </p>
-              <div>
-                <button
-                  className={`rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 ${xProFlowBlue.focusRing}`}
-                >
-                  Start now
-                </button>
-              </div>
-            </div>
-            <button
-              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/70 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-              aria-label="Dismiss tone setup card"
-              onClick={() => {
-                setShowToneCard(false);
-                localStorage.setItem('showToneCard', 'false');
-              }}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </Card>
-      ) : null}
-
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Performance Summary
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {kpiStats.map((stat) => (
-            <KpiCard
-              key={stat.label}
-              value={stat.value}
-              label={stat.label}
-              icon={stat.icon}
-              accent={stat.accent}
-            />
-          ))}
-        </div>
-      </div>
-
-      <Card className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Your Email Makeup
-          </h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Breakdown of emails received in the last 30 days
-          </p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px]">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-            <div className="flex h-40 w-40 items-center justify-center">
-              <svg width="160" height="160" viewBox="0 0 160 160" className="overflow-visible">
-                <circle
-                  cx="80"
-                  cy="80"
-                  r={donutRadius}
-                  fill="none"
-                  strokeWidth={donutStroke}
-                  className="stroke-slate-200 dark:stroke-slate-700"
-                />
-                {emailMakeup.map((slice) => {
-                  const sliceLength = (slice.value / donutTotal) * donutCircumference;
-                  const dashArray = `${sliceLength} ${donutCircumference - sliceLength}`;
-                  const dashOffset = -(donutOffset / donutTotal) * donutCircumference;
-                  donutOffset += slice.value;
-                  return (
-                    <circle
-                      key={slice.label}
-                      cx="80"
-                      cy="80"
-                      r={donutRadius}
-                      fill="none"
-                      stroke={slice.color}
-                      strokeWidth={donutStroke}
-                      strokeDasharray={dashArray}
-                      strokeDashoffset={dashOffset}
-                      strokeLinecap="round"
-                      transform="rotate(-90 80 80)"
-                    />
-                  );
-                })}
-              </svg>
-            </div>
-            <div className="space-y-3">
-              {emailMakeup.map((slice) => (
-                <div key={slice.label} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: slice.color }}
-                    />
-                    <span className="text-slate-600 dark:text-slate-300">{slice.label}</span>
-                  </div>
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">
-                    {slice.value}%
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <MetricCard
-              title="Writes Like You"
-              value="87%"
-              description="Emails drafted in your tone"
-            />
-            <MetricCard title="Sent Emails" value="462" description="Total emails sent" />
-          </div>
+      <Card className="p-4">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search or ask XProFlow a question"
+            className="w-full rounded-2xl border border-transparent bg-slate-100/80 py-3 pl-11 pr-4 text-sm text-slate-700 outline-none transition focus:border-slate-200 focus:bg-white focus:ring-2 focus:ring-sky-100"
+          />
         </div>
       </Card>
 
+      <div className="space-y-6">
+        {inboxGroups.map((group) => (
+          <div key={group.title} className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                {group.title}
+              </h2>
+              <span className="text-xs text-slate-400">{group.emails.length} messages</span>
+            </div>
+            <Card className="divide-y divide-slate-200/70">
+              {group.emails.map((email, index) => (
+                <div
+                  key={`${email.sender}-${email.subject}-${index}`}
+                  className="flex cursor-pointer items-center justify-between gap-4 px-4 py-4 transition hover:bg-slate-50"
+                >
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-900">{email.sender}</p>
+                      <span className="h-1 w-1 rounded-full bg-slate-300" />
+                      <p className="text-sm font-medium text-slate-700">{email.subject}</p>
+                    </div>
+                    {email.preview ? (
+                      <p className="truncate text-xs text-slate-500">{email.preview}</p>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-col items-end gap-2 text-right">
+                    <span className="text-xs font-medium text-slate-400">{email.time}</span>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${email.statusStyle}`}
+                    >
+                      {email.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </div>
+        ))}
+      </div>
     </section>
   );
 };
