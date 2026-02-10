@@ -83,6 +83,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [refreshSession]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      void refreshSession();
+    }, 60_000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [refreshSession]);
+
+  useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         setIsAuthenticated(true);
