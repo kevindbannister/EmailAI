@@ -6,7 +6,7 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
 
 const cookieOptions = {
   domain: '.xproflow.com',
-  sameSite: 'lax' as const,
+  sameSite: 'none' as const,
   secure: true,
   path: '/',
 };
