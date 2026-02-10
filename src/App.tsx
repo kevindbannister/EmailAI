@@ -38,6 +38,20 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        supabase.auth.setSession(session);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <Routes>
       <Route
