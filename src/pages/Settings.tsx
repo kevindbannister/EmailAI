@@ -106,11 +106,9 @@ const Settings = () => {
 
       <section className="settings-layout">
         <aside className={`settings-nav ${mobileNavOpen ? 'is-open' : ''}`} aria-label="Settings sidebar">
-          {/* Compact brand/icon rail to mirror the mockup proportions */}
+          {/* Compact brand rail */}
           <div className="settings-rail" aria-hidden="true">
             <div className="settings-rail__brand">XPF</div>
-            <span className="settings-rail__dot">✉</span>
-            <span className="settings-rail__dot">⚙</span>
           </div>
 
           {/* Primary category list: only required settings groups */}
