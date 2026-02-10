@@ -23,6 +23,26 @@ type MeResponse = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const clearPersistedAuthState = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.removeItem('xproflow-manual-auth');
+
+  Object.keys(window.localStorage)
+    .filter((key) => key.startsWith('sb-'))
+    .forEach((key) => {
+      window.localStorage.removeItem(key);
+    });
+
+  Object.keys(window.sessionStorage)
+    .filter((key) => key.startsWith('sb-'))
+    .forEach((key) => {
+      window.sessionStorage.removeItem(key);
+    });
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,15 +143,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setGmailEmail(undefined);
         setCsrfToken(undefined);
         setManualAuth(false);
-        if (typeof window !== 'undefined') {
-          window.localStorage.removeItem('xproflow-manual-auth');
-        }
+        clearPersistedAuthState();
+
         try {
-          if (csrfToken) {
-            await api.post('/auth/logout', undefined, { 'x-csrf-token': csrfToken });
-          }
+          await api.post(
+            '/auth/logout',
+            undefined,
+            csrfToken ? { 'x-csrf-token': csrfToken } : undefined
+          );
         } finally {
-          await supabase.auth.signOut();
+          await supabase.auth.signOut({ scope: 'global' });
+          clearPersistedAuthState();
         }
       },
       refreshSession
