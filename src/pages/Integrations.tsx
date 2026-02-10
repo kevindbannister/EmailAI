@@ -3,6 +3,7 @@ import { Button } from '../components/ui/Button';
 import { integrationDefinitions } from '../lib/settingsData';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
+import { apiBaseUrl } from '../lib/apiBaseUrl';
 
 const statusStyles = {
   connected: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40',
@@ -14,7 +15,7 @@ const Integrations = () => {
   const { gmailConnected, gmailEmail, csrfToken, refreshSession } = useAuth();
 
   const handleConnect = async () => {
-    window.location.href = '/api/gmail/oauth/start';
+    window.location.href = `${apiBaseUrl}/api/gmail/oauth/start`;
   };
 
   const handleDisconnect = async () => {
