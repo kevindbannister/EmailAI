@@ -16,10 +16,19 @@ import SettingsDrafts from './pages/SettingsDrafts';
 import Workflows from './pages/Workflows';
 import Inbox from './pages/Inbox';
 
+const AppLoadingScreen = () => (
+  <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-center text-slate-100">
+    <div>
+      <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-400">XProFlow</p>
+      <p className="mt-3 text-base text-slate-200">Preparing your workspace…</p>
+    </div>
+  </div>
+);
+
 const RequireAuth = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
-    return null;
+    return <AppLoadingScreen />;
   }
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -57,7 +66,13 @@ const App = () => {
       <Route
         path="login"
         element={
-          isLoading ? null : isAuthenticated ? <Navigate to="/inbox" replace /> : <Login />
+          isLoading ? (
+            <AppLoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/inbox" replace />
+          ) : (
+            <Login />
+          )
         }
       />
       <Route path="auth/callback" element={<AuthCallback />} />
