@@ -1,100 +1,78 @@
+import type { ComponentType } from 'react';
+import { Cog, GanttChartSquare, House, Inbox, LifeBuoy, MailSearch, ShieldCheck } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Mail, Settings } from 'lucide-react';
-import { Avatar } from '../ui/Avatar';
-import { getUserInitials, useUser } from '../../context/UserContext';
 import { classNames } from '../../lib/utils';
 
-const navigation = [
-  { label: 'Inbox', to: '/inbox', icon: Mail },
-];
-
-type SidebarProps = {
-  collapsed: boolean;
-  onToggle: () => void;
+type NavItem = {
+  label: string;
+  to: string;
+  icon: ComponentType<{ className?: string }>;
 };
 
-const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
-  const { user } = useUser();
+const primaryItems: NavItem[] = [
+  { label: 'Dashboard', to: '/dashboard', icon: House },
+  { label: 'Inbox', to: '/inbox', icon: Inbox },
+  { label: 'Rules', to: '/rules', icon: GanttChartSquare }
+];
+
+const secondaryItems: NavItem[] = [
+  { label: 'Settings', to: '/settings', icon: Cog },
+  { label: 'Help & Support', to: '/integrations', icon: LifeBuoy }
+];
+
+const NavItemButton = ({ item }: { item: NavItem }) => {
+  const Icon = item.icon;
+
   return (
-    <aside
-      className={classNames(
-        'sidebar-surface fixed inset-y-0 left-0 z-40 flex flex-col border-r py-8 transition-all',
-        collapsed ? 'w-20 px-3' : 'w-20 px-3'
-      )}
+    <NavLink
+      to={item.to}
+      className={({ isActive }) =>
+        classNames(
+          'group relative flex h-10 w-10 items-center justify-center rounded-xl border transition',
+          isActive
+            ? 'border-slate-300 bg-slate-900 text-white'
+            : 'border-transparent text-slate-500 hover:border-slate-200 hover:bg-white hover:text-slate-700'
+        )
+      }
+      aria-label={item.label}
     >
-      <div className="flex items-center justify-center">
-        <span className="text-lg font-semibold tracking-[0.3em] text-slate-900 dark:text-slate-100">
-          XPF
-        </span>
-      </div>
-      <button
-        type="button"
-        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        onClick={onToggle}
-        className="sr-only"
-      >
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </button>
+      <Icon className="h-5 w-5" />
+      <span className="pointer-events-none absolute left-12 top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm group-hover:block">
+        {item.label}
+      </span>
+    </NavLink>
+  );
+};
 
-      <nav className="mt-8 flex flex-1 flex-col items-center gap-4">
-        {navigation.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.label}
-              to={item.to}
-              className="group flex w-full items-center justify-center"
-              aria-label={item.label}
-            >
-              {({ isActive }: { isActive: boolean }) => (
-                <span
-                  className={classNames(
-                    'flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300',
-                    isActive
-                      ? 'border-slate-300 bg-slate-900 text-white dark:border-slate-600 dark:bg-slate-100 dark:text-slate-900'
-                      : 'group-hover:border-slate-300 group-hover:text-slate-900 dark:group-hover:border-slate-600 dark:group-hover:text-slate-100'
-                  )}
-                  title={item.label}
-                >
-                  <Icon className="h-5 w-5" strokeWidth={1.6} />
-                </span>
-              )}
-            </NavLink>
-          );
-        })}
-      </nav>
+const Sidebar = () => {
+  return (
+    <aside className="fixed bottom-0 left-0 top-16 z-40 w-16 border-r border-slate-200 bg-slate-100/95">
+      <div className="flex h-full flex-col items-center py-3">
+        <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-700">
+          <MailSearch className="h-5 w-5" />
+        </div>
 
-      <div className="mt-auto flex items-center justify-center gap-3 px-2 pb-2">
-        <NavLink
-          to="/profile"
-          className="group flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-slate-100"
-          aria-label="Profile"
-        >
-          <span title="Profile" className="flex items-center justify-center">
-            <Avatar
-              src={user.avatarUrl}
-              alt={`${user.name} avatar`}
-              fallback={getUserInitials(user.name)}
-              className="h-8 w-8 rounded-full bg-slate-100 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-100"
-            />
-          </span>
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className={({ isActive }: { isActive: boolean }) =>
-            classNames(
-              'group flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300',
-              isActive
-                ? 'border-slate-300 bg-slate-900 text-white dark:border-slate-600 dark:bg-slate-100 dark:text-slate-900'
-                : 'hover:border-slate-300 hover:text-slate-900 dark:hover:border-slate-600 dark:hover:text-slate-100'
-            )
-          }
-          aria-label="Settings"
-        >
-          <span title="Settings" className="flex items-center justify-center">
-            <Settings className="h-5 w-5" strokeWidth={1.6} />
-          </span>
-        </NavLink>
+        <nav className="flex w-full flex-1 flex-col items-center gap-2">
+          {primaryItems.map((item) => (
+            <NavItemButton key={item.label} item={item} />
+          ))}
+        </nav>
+
+        <div className="mb-2 mt-auto flex w-full flex-col items-center gap-2 border-t border-slate-200 pt-3">
+          {secondaryItems.map((item) => (
+            <NavItemButton key={item.label} item={item} />
+          ))}
+          <button
+            type="button"
+            className="group relative flex h-10 w-10 items-center justify-center rounded-xl border border-transparent text-slate-500 transition hover:border-slate-200 hover:bg-white hover:text-slate-700"
+            aria-label="Security"
+          >
+            <ShieldCheck className="h-5 w-5" />
+            <span className="pointer-events-none absolute left-12 top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm group-hover:block">
+              Security
+            </span>
+          </button>
+        </div>
       </div>
     </aside>
   );
