@@ -1,18 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? 'https://example.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'public-anon-key';
+
 if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  console.error('Missing Supabase env vars');
+  console.warn('Missing Supabase env vars. Falling back to placeholder client config.');
 }
 
-export const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: false,
-      detectSessionInUrl: true,
-      flowType: 'pkce',
-    },
-  }
-);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: false,
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+  },
+});
