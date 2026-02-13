@@ -240,6 +240,14 @@ body {
   pointer-events: none;
 }
 
+.app-main-bg {
+  background-color: #f3f4f8;
+  background-image: url('/main-section-bg.svg');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .glass-card {
   background: var(--surface);
   border-color: var(--surface-border);
