@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Bell, ChevronDown, CircleHelp, Moon, Sun } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
 import { getUserInitials, useUser } from '../../context/UserContext';
+import AppLogo from '../branding/AppLogo';
 
 type TopbarProps = {
   title?: string;
@@ -42,7 +43,7 @@ const Topbar = ({ title }: TopbarProps) => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex h-11 items-center justify-between border-b border-slate-200 bg-slate-50/95 px-3 backdrop-blur-sm">
       <div className="flex min-w-0 items-center gap-2">
-        <span className="text-base font-bold tracking-wide text-slate-900">XPF</span>
+        <AppLogo className="h-6 w-auto" />
         {title ? <h1 className="truncate text-sm font-semibold text-slate-700">{title}</h1> : null}
       </div>
 
