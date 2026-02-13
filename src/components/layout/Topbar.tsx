@@ -3,6 +3,7 @@ import { Bell, ChevronDown, CircleHelp, Moon, Sun } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
 import { xProFlowLogoDark, xProFlowLogoLight } from './logoAssets';
 import { getUserInitials, useUser } from '../../context/UserContext';
+import { appLogoSrc } from '../branding/AppLogo';
 
 type TopbarProps = {
   title?: string;

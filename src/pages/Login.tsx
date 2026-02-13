@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import { useAuth } from '../context/AuthContext';
+import { appLogoSrc } from '../components/branding/AppLogo';
 
 const Login = () => {
   const { loginWithManual } = useAuth();
@@ -26,9 +27,9 @@ const Login = () => {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6 py-12 dark:bg-slate-950">
       <Card className="w-full max-w-md space-y-4 text-center">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            EmailAI
-          </p>
+          <div className="mb-3 flex justify-center">
+            <img src={appLogoSrc} alt="XProFlow" className="h-10 w-auto" />
+          </div>
           <h1 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">
             Welcome back
           </h1>
