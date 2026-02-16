@@ -5,12 +5,7 @@ import { getUserInitials, useUser } from '../../context/UserContext';
 import AppLogo from '../branding/AppLogo';
 import { applyThemeMode, getInitialThemeMode, type ThemeMode } from '../../lib/theme';
 
-type TopbarProps = {
-  title?: string;
-};
-
-
-const Topbar = ({ title }: TopbarProps) => {
+const Topbar = () => {
   const { user } = useUser();
   const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
 
@@ -26,7 +21,6 @@ const Topbar = ({ title }: TopbarProps) => {
     <header className="topbar-surface fixed inset-x-0 top-0 z-50 flex h-11 items-center justify-between border-b px-3 backdrop-blur-sm">
       <div className="flex min-w-0 items-center gap-2">
         <AppLogo className="h-6 w-auto" />
-        {title ? <h1 className="theme-text-secondary truncate text-sm font-semibold">{title}</h1> : null}
       </div>
 
       <div className="flex items-center gap-0">

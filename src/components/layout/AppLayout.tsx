@@ -15,9 +15,14 @@ const AppLayout = () => {
 
   return (
     <div className="app-shell-bg min-h-screen theme-text-primary">
-      <Topbar title={meta?.title} />
+      <Topbar />
       <Sidebar />
       <main className="app-main-bg ml-12 mt-11 h-[calc(100vh-2.75rem)] overflow-y-auto p-6">
+        {meta?.title ? (
+          <header className="mb-6">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{meta.title}</h1>
+          </header>
+        ) : null}
         <Outlet />
       </main>
     </div>
