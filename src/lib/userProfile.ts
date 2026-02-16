@@ -15,8 +15,15 @@ export const getUserProfile = (user: User) => {
   const rawMetadata =
     (user as { raw_user_meta_data?: UserMetadata }).raw_user_meta_data ?? user.user_metadata;
   const metadata = rawMetadata ?? {};
+  const firstName = getStringValue(metadata.given_name);
+  const lastName = getStringValue(metadata.family_name);
+  const providerName = [firstName, lastName].filter(Boolean).join(' ').trim();
   const name =
-    getStringValue(metadata.full_name) || getStringValue(metadata.name) || '';
+    getStringValue(metadata.full_name) ||
+    getStringValue(metadata.name) ||
+    providerName ||
+    getStringValue(metadata.preferred_username) ||
+    '';
   const email = getStringValue(user.email) || getStringValue(metadata.email);
   const avatarUrl =
     getStringValue(metadata.avatar_url) ||
