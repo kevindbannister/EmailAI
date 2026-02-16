@@ -2,14 +2,15 @@ import { useState } from 'react';
 import {
   AtSign,
   Clock3,
+  GitBranch,
+  Inbox,
+  LayoutDashboard,
   PenSquare,
   Shield,
-  Tag,
-  Menu,
-  X
+  Tag
 } from 'lucide-react';
-import { xProFlowLogoDark, xProFlowLogoLight } from '../components/layout/logoAssets';
-import '../styles/settings-page.css';
+import { NavLink } from 'react-router-dom';
+import { classNames } from '../lib/utils';
 
 type SettingsCategoryId = 'rules' | 'labels' | 'writingStyle' | 'signatureTimeZone' | 'account';
 
@@ -21,6 +22,12 @@ type SettingsCategory = {
   subtitle: string;
   sections: Array<{ heading: string; description: string }>;
 };
+
+const primaryNavigation = [
+  { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+  { label: 'Inbox', to: '/inbox', icon: Inbox },
+  { label: 'Rules', to: '/rules', icon: GitBranch }
+];
 
 const categories: SettingsCategory[] = [
   {
@@ -87,41 +94,41 @@ const categories: SettingsCategory[] = [
 
 const Settings = () => {
   const [activeCategory, setActiveCategory] = useState<SettingsCategoryId>('rules');
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  const selectedCategory =
-    categories.find((category) => category.id === activeCategory) ?? categories[0];
+  const selectedCategory = categories.find((category) => category.id === activeCategory) ?? categories[0];
 
   return (
-    <main className="settings-page-light" aria-label="Settings page">
-      <button
-        type="button"
-        className="settings-mobile-toggle"
-        onClick={() => setMobileNavOpen((prev) => !prev)}
-        aria-label="Toggle settings navigation"
-        aria-expanded={mobileNavOpen}
-      >
-        {mobileNavOpen ? <X size={16} /> : <Menu size={16} />}
-        <span>Settings Menu</span>
-      </button>
+    <main className="rounded-2xl border border-slate-200 bg-slate-50 p-4 lg:p-5" aria-label="Settings page">
+      <section className="grid items-start gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
+        <aside className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto">
+          <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+            <nav aria-label="Main navigation" role="navigation" className="mb-4 border-b border-slate-100 pb-4">
+              <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Main navigation</p>
+              <ul role="list" className="space-y-1">
+                {primaryNavigation.map(({ label, to, icon: Icon }) => (
+                  <li key={label}>
+                    <NavLink
+                      to={to}
+                      className={({ isActive }) =>
+                        classNames(
+                          'flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium transition',
+                          isActive
+                            ? 'bg-slate-900 text-white'
+                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/40 dark:hover:text-slate-100'
+                        )
+                      }
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+                      <span>{label}</span>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-      <section className="settings-layout">
-        <aside className={`settings-nav ${mobileNavOpen ? 'is-open' : ''}`} aria-label="Settings sidebar">
-          {/* Compact brand rail */}
-          <div className="settings-rail" aria-hidden="true">
-            <div className="settings-rail__brand">
-              <img src={xProFlowLogoDark} alt="XProFlow" className="settings-rail__brand-image settings-rail__brand-image--light" />
-              <img src={xProFlowLogoLight} alt="XProFlow" className="settings-rail__brand-image settings-rail__brand-image--dark" />
-            </div>
-          </div>
-
-          {/* Primary category list: only required settings groups */}
-          <div className="settings-menu-panel">
-            <header>
-              <h1>Settings</h1>
-            </header>
-            <nav>
-              <ul>
+            <nav aria-label="Settings sections" role="navigation">
+              <h2 className="mb-2 px-2 text-base font-semibold text-slate-900 dark:text-slate-100">Settings</h2>
+              <ul role="list" className="space-y-1">
                 {categories.map((category) => {
                   const Icon = category.icon;
                   const isActive = category.id === selectedCategory.id;
@@ -130,14 +137,17 @@ const Settings = () => {
                     <li key={category.id}>
                       <button
                         type="button"
-                        className={`settings-menu-item ${isActive ? 'is-active' : ''}`}
-                        onClick={() => {
-                          setActiveCategory(category.id);
-                          setMobileNavOpen(false);
-                        }}
+                        onClick={() => setActiveCategory(category.id)}
+                        className={classNames(
+                          'flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium transition',
+                          isActive
+                            ? 'bg-slate-900 text-white'
+                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/40 dark:hover:text-slate-100'
+                        )}
                         aria-current={isActive ? 'page' : undefined}
+                        aria-controls="settings-content-panel"
                       >
-                        <Icon size={14} strokeWidth={1.75} />
+                        <Icon className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
                         <span>{category.label}</span>
                       </button>
                     </li>
@@ -148,19 +158,22 @@ const Settings = () => {
           </div>
         </aside>
 
-        {/* Right-side content panel updates based on active category */}
-        <section className="settings-content-panel" aria-live="polite">
-          <header className="settings-content-panel__header">
-            <p className="settings-kicker">Category</p>
-            <h2>{selectedCategory.title}</h2>
-            <p>{selectedCategory.subtitle}</p>
+        <section
+          id="settings-content-panel"
+          className="min-h-[32rem] rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:p-6"
+          aria-live="polite"
+        >
+          <header className="mb-6 border-b border-slate-100 pb-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Category</p>
+            <h1 className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">{selectedCategory.title}</h1>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{selectedCategory.subtitle}</p>
           </header>
 
-          <div className="settings-content-grid">
+          <div className="grid gap-3 lg:grid-cols-2">
             {selectedCategory.sections.map((section) => (
-              <article key={section.heading} className="settings-content-card">
-                <h3>{section.heading}</h3>
-                <p>{section.description}</p>
+              <article key={section.heading} className="rounded-lg border border-slate-200 bg-white p-4">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{section.heading}</h3>
+                <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">{section.description}</p>
               </article>
             ))}
           </div>
