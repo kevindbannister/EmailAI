@@ -2,13 +2,12 @@ import { useState } from 'react';
 import {
   AtSign,
   Clock3,
-  PenSquare,
   Shield,
   Tag
 } from 'lucide-react';
 import { classNames } from '../lib/utils';
 
-type SettingsCategoryId = 'rules' | 'labels' | 'writingStyle' | 'signatureTimeZone' | 'account';
+type SettingsCategoryId = 'rules' | 'labels' | 'signatureTimeZone' | 'account';
 
 type SettingsCategory = {
   id: SettingsCategoryId;
@@ -42,18 +41,6 @@ const categories: SettingsCategory[] = [
       { heading: 'Default labels', description: 'Apply a review label automatically to generated drafts.' },
       { heading: 'Smart categorization', description: 'Use topic-driven labels for billing, support, and follow-ups.' },
       { heading: 'Archive behavior', description: 'Move low-priority labeled threads out of your primary inbox.' }
-    ]
-  },
-  {
-    id: 'writingStyle',
-    label: 'Writing Style',
-    icon: PenSquare,
-    title: 'Writing Style',
-    subtitle: 'Tune voice, formality, and response structure in drafts.',
-    sections: [
-      { heading: 'Tone preset', description: 'Keep a friendly and professional voice across all conversations.' },
-      { heading: 'Response length', description: 'Choose concise defaults while allowing detailed replies when needed.' },
-      { heading: 'Formatting', description: 'Enable clean summaries and action-first paragraph structure.' }
     ]
   },
   {

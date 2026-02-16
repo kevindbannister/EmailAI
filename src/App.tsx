@@ -16,6 +16,7 @@ import SettingsDrafts from './pages/SettingsDrafts';
 import Workflows from './pages/Workflows';
 import Inbox from './pages/Inbox';
 import Dashboard from './pages/Dashboard';
+import WritingStyle from './pages/WritingStyle';
 import { applyThemeMode, getInitialThemeMode } from './lib/theme';
 
 const AppLoadingScreen = () => (
@@ -104,6 +105,7 @@ const App = () => {
         <Route path="integrations" element={<Integrations />} />
         <Route path="workflows" element={<Workflows />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="writing-style" element={<WritingStyle />} />
         <Route path="settings/drafts" element={<SettingsDrafts />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

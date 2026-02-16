@@ -6,6 +6,7 @@ const routeMeta: Record<string, { title: string }> = {
   '/dashboard': { title: 'Dashboard' },
   '/rules': { title: 'Rules' },
   '/settings': { title: 'Settings' },
+  '/writing-style': { title: 'Writing Style' },
   '/profile': { title: 'Profile' },
 };
 
