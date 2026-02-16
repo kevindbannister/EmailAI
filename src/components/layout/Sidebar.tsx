@@ -36,9 +36,11 @@ const Sidebar = () => {
       to={to}
       className={({ isActive }: { isActive: boolean }) =>
         classNames(
-          'group relative flex h-8 w-full items-center rounded-lg border border-transparent px-2 theme-text-muted transition hover:bg-slate-100/60 hover:text-slate-100',
+          'group relative flex h-8 w-full items-center rounded-lg border border-transparent px-2 transition hover:bg-slate-100/60',
           isCollapsed ? 'justify-center' : 'justify-start gap-2',
-          isActive && 'border-slate-300/40 bg-slate-900 text-white hover:bg-slate-900 hover:text-white'
+          isActive
+            ? 'border-slate-300/40 bg-slate-900 text-white hover:bg-slate-900 hover:text-white'
+            : 'theme-text-muted hover:text-blue-600'
         )
       }
       aria-label={label}
@@ -66,12 +68,12 @@ const Sidebar = () => {
           onClick={toggleSidebar}
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className={classNames(
-            'flex h-8 w-full items-center rounded-lg border border-transparent px-2 theme-text-muted transition hover:bg-slate-100/60 hover:text-slate-100',
+            'flex h-8 w-full items-center rounded-lg border border-transparent px-2 theme-text-muted transition hover:bg-slate-100/60 hover:text-blue-600',
             isCollapsed ? 'justify-center' : 'justify-start gap-2'
           )}
         >
           {isCollapsed ? <PanelLeftOpen className="h-4 w-4 shrink-0" /> : <PanelLeftClose className="h-4 w-4 shrink-0" />}
-          <span className="sidebar-label truncate text-xs font-medium">Collapse</span>
+          <span className="sidebar-label truncate text-xs font-medium">{isCollapsed ? 'Expand' : 'Collapse'}</span>
         </button>
       </div>
     </aside>
