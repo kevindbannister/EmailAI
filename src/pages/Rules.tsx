@@ -5,12 +5,9 @@ import { ruleDefinitions } from '../lib/settingsData';
 const Rules = () => {
   return (
     <section className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Rules</h1>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Define automation rules with explicit approvals and clear outcomes.
-        </p>
-      </div>
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        Define automation rules with explicit approvals and clear outcomes.
+      </p>
 
       <Card className="space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
