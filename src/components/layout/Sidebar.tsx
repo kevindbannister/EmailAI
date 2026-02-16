@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, GitBranch, Settings, CircleHelp, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { LayoutDashboard, Inbox, GitBranch, Settings, CircleHelp, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { classNames } from '../../lib/utils';
@@ -8,6 +8,7 @@ const SIDEBAR_COLLAPSED_STORAGE_KEY = 'xproflow.sidebar.collapsed';
 const primaryNavigation = [
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
   { label: 'Inbox', to: '/inbox', icon: Inbox },
+  { label: 'Labels', to: '/labels', icon: Tag },
   { label: 'Rules', to: '/rules', icon: GitBranch },
 ];
 
