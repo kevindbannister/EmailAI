@@ -66,12 +66,12 @@ const Sidebar = () => {
           onClick={toggleSidebar}
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className={classNames(
-            'flex h-8 w-full items-center rounded-lg border border-transparent px-2 theme-text-muted transition hover:bg-slate-100/60 hover:text-slate-100',
+            'flex h-8 w-full items-center rounded-lg border border-transparent px-2 theme-text-muted transition hover:bg-slate-100/60 hover:text-blue-600',
             isCollapsed ? 'justify-center' : 'justify-start gap-2'
           )}
         >
           {isCollapsed ? <PanelLeftOpen className="h-4 w-4 shrink-0" /> : <PanelLeftClose className="h-4 w-4 shrink-0" />}
-          <span className="sidebar-label truncate text-xs font-medium">Collapse</span>
+          <span className="sidebar-label truncate text-xs font-medium">{isCollapsed ? 'Expand' : 'Collapse'}</span>
         </button>
       </div>
     </aside>
