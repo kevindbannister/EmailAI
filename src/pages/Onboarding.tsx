@@ -7,16 +7,25 @@ import { onboardingSteps } from '../onboarding/steps';
 const Onboarding = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
 
   const handleExit = () => {
     // TODO: Persist onboarding progress once backend state is ready.
     navigate('/dashboard');
   };
 
+  const handleAnswerChange = (key: string, value: string | string[]) => {
+    setAnswers((previousAnswers) => ({
+      ...previousAnswers,
+      [key]: value
+    }));
+  };
+
   const handleContinue = () => {
     // TODO: Save step-level onboarding preferences before advancing.
     if (currentStep >= onboardingSteps.length - 1) {
       // TODO: Mark onboarding as completed and suppress entry points.
+      // TODO: Persist answer payload for personalization and conditional onboarding flows.
       navigate('/dashboard');
       return;
     }
@@ -31,7 +40,11 @@ const Onboarding = () => {
       onContinue={handleContinue}
       onExit={handleExit}
     >
-      <OnboardingStep step={onboardingSteps[currentStep]} />
+      <OnboardingStep
+        step={onboardingSteps[currentStep]}
+        answers={answers}
+        onAnswerChange={handleAnswerChange}
+      />
     </OnboardingContainer>
   );
 };
