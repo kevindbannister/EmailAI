@@ -17,6 +17,17 @@ const routeMeta: Record<string, { title: string }> = {
 const AppLayout = () => {
   const location = useLocation();
   const meta = routeMeta[location.pathname];
+  const isFullScreenOnboarding = location.pathname === '/onboarding';
+
+  if (isFullScreenOnboarding) {
+    return (
+      <div className="app-shell-bg min-h-screen theme-text-primary">
+        <main className="app-main-bg h-screen overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell-bg min-h-screen theme-text-primary">

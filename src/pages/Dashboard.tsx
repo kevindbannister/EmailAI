@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import Card from '../components/ui/Card';
+import WelcomeEntry from '../onboarding/components/WelcomeEntry';
 import { useAuth } from '../context/AuthContext';
 
 type InboxEmail = {
@@ -184,6 +185,17 @@ const Dashboard = () => {
             placeholder="Search or ask XProFlow a question"
             className="input-surface w-full rounded-2xl border py-3 pl-11 pr-4 text-sm theme-text-secondary outline-none transition focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
           />
+        </div>
+      </Card>
+
+      <Card className="border-violet-200/30 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 p-5 text-white dark:border-violet-300/20">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="space-y-1.5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-violet-200">Get started</p>
+            <h2 className="text-xl font-semibold">New here? Start your XProFlow onboarding.</h2>
+            <p className="text-sm text-slate-300">Walk through a quick setup flow to tailor your workspace.</p>
+          </div>
+          <WelcomeEntry />
         </div>
       </Card>
 
