@@ -15,12 +15,15 @@ const request = async <T>(endpoint: string, options: ApiOptions = {}): Promise<T
 
   const { data } = await supabase.auth.getSession();
   const accessToken = data.session?.access_token;
+  const isMasterSession = typeof window !== 'undefined' && window.localStorage.getItem('xproflow-manual-auth') === 'true';
+
   const response = await fetch(normalizedEndpoint, {
     method: options.method || 'GET',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(isMasterSession ? { 'x-master-session': 'true' } : {}),
       ...(options.headers || {})
     },
     body: options.body ? JSON.stringify(options.body) : undefined
