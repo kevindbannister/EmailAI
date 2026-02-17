@@ -11,6 +11,7 @@ type AuthContextValue = {
   csrfToken?: string;
   subscription?: SubscriptionSnapshot;
   hasAppAccess: boolean;
+  isMasterUser: boolean;
   loginWithGoogle: () => Promise<void>;
   loginWithManual: () => void;
   logout: () => Promise<void>;
@@ -26,7 +27,7 @@ type MeResponse = {
 };
 
 const ALLOWED_APP_STATUSES: SubscriptionStatus[] = ['trial', 'active', 'past_due'];
-const MANUAL_AUTH_KEY = 'xproflow-manual-auth';
+export const MANUAL_AUTH_KEY = 'xproflow-manual-auth';
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -83,6 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       csrfToken,
       subscription,
       hasAppAccess: subscription ? ALLOWED_APP_STATUSES.includes(subscription.status) : true,
+      isMasterUser: manualAuth,
       loginWithGoogle: async () => {
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
@@ -110,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       },
       refreshSession,
     }),
-    [isAuthenticated, isLoading, gmailConnected, gmailEmail, csrfToken, subscription, refreshSession]
+    [isAuthenticated, isLoading, gmailConnected, gmailEmail, csrfToken, subscription, refreshSession, manualAuth]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
