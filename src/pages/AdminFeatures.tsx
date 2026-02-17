@@ -20,6 +20,8 @@ const AdminFeatures = () => {
   const { flags, updateFlags, isLoading } = useFeatureFlags();
   const [localFlags, setLocalFlags] = useState(flags);
   const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLocalFlags(flags);
@@ -27,8 +29,14 @@ const AdminFeatures = () => {
 
   const handleSave = async () => {
     setIsSaving(true);
+    setError(null);
+    setMessage(null);
+
     try {
       await updateFlags(localFlags);
+      setMessage('Feature settings saved. Sidebar updates have been applied.');
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Unable to save feature settings.');
     } finally {
       setIsSaving(false);
     }
@@ -52,6 +60,8 @@ const AdminFeatures = () => {
             </label>
           ))}
         </div>
+        {message ? <p className="text-xs text-emerald-600 dark:text-emerald-400">{message}</p> : null}
+        {error ? <p className="text-xs text-red-500">{error}</p> : null}
         <Button type="button" onClick={handleSave} disabled={isLoading || isSaving}>
           {isSaving ? 'Saving…' : 'Save feature settings'}
         </Button>

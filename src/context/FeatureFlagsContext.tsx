@@ -22,6 +22,8 @@ type FeatureFlagsContextValue = {
   updateFlags: (nextFlags: FeatureFlags) => Promise<void>;
 };
 
+const FEATURE_FLAGS_STORAGE_KEY = 'xproflow.feature-flags';
+
 const defaultFlags: FeatureFlags = {
   dashboard: true,
   inbox: true,
@@ -35,16 +37,43 @@ const defaultFlags: FeatureFlags = {
   help: true,
 };
 
+const getStoredFlags = (): FeatureFlags => {
+  if (typeof window === 'undefined') {
+    return defaultFlags;
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(FEATURE_FLAGS_STORAGE_KEY);
+    if (!rawValue) {
+      return defaultFlags;
+    }
+
+    const parsed = JSON.parse(rawValue) as Partial<FeatureFlags>;
+    return { ...defaultFlags, ...parsed };
+  } catch {
+    return defaultFlags;
+  }
+};
+
+const persistFlags = (nextFlags: FeatureFlags) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.setItem(FEATURE_FLAGS_STORAGE_KEY, JSON.stringify(nextFlags));
+};
+
 const FeatureFlagsContext = createContext<FeatureFlagsContextValue | undefined>(undefined);
 
 export const FeatureFlagsProvider = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAuth();
-  const [flags, setFlags] = useState<FeatureFlags>(defaultFlags);
+  const [flags, setFlags] = useState<FeatureFlags>(getStoredFlags);
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshFlags = useCallback(async () => {
     if (!isAuthenticated) {
       setFlags(defaultFlags);
+      persistFlags(defaultFlags);
       setIsLoading(false);
       return;
     }
@@ -52,9 +81,11 @@ export const FeatureFlagsProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
       const data = await api.get<{ flags: FeatureFlags }>('/api/feature-flags');
-      setFlags({ ...defaultFlags, ...data.flags });
+      const normalizedFlags = { ...defaultFlags, ...data.flags };
+      setFlags(normalizedFlags);
+      persistFlags(normalizedFlags);
     } catch {
-      setFlags(defaultFlags);
+      setFlags((currentFlags) => ({ ...defaultFlags, ...currentFlags }));
     } finally {
       setIsLoading(false);
     }
@@ -70,8 +101,18 @@ export const FeatureFlagsProvider = ({ children }: { children: ReactNode }) => {
       isLoading,
       refreshFlags,
       updateFlags: async (nextFlags: FeatureFlags) => {
-        const data = await api.put<{ flags: FeatureFlags }>('/api/feature-flags', { flags: nextFlags });
-        setFlags({ ...defaultFlags, ...data.flags });
+        const normalizedFlags = { ...defaultFlags, ...nextFlags };
+        setFlags(normalizedFlags);
+        persistFlags(normalizedFlags);
+
+        try {
+          const data = await api.put<{ flags: FeatureFlags }>('/api/feature-flags', { flags: normalizedFlags });
+          const serverFlags = { ...defaultFlags, ...data.flags };
+          setFlags(serverFlags);
+          persistFlags(serverFlags);
+        } catch {
+          throw new Error('Failed to save feature settings. Please try again.');
+        }
       },
     }),
     [flags, isLoading, refreshFlags]
