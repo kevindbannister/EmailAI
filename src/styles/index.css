@@ -9,12 +9,13 @@
   --main-bg-color: #f3f4f8;
   --main-bg-image: url('/main-section-bg.svg');
   --app-shell-gradient: linear-gradient(135deg, #eef4ff 0%, #e1ebff 45%, #d7e6ff 100%);
+  --app-shell-image: url('/Background.svg');
   --app-shell-radial-1: rgba(255, 255, 255, 0.6);
   --app-shell-radial-2: rgba(188, 214, 255, 0.6);
   --app-shell-radial-3: rgba(203, 225, 255, 0.55);
   --app-shell-dot: rgba(255, 255, 255, 0.4);
   --surface: rgba(255, 255, 255, 0.75);
-  --surface-strong: rgba(255, 255, 255, 0.9);
+  --surface-strong: rgba(255, 255, 255, 0.55);
   --surface-border: rgba(255, 255, 255, 0.7);
   --surface-border-strong: rgba(255, 255, 255, 0.6);
   --surface-shadow: 0 20px 60px rgba(80, 115, 190, 0.16);
@@ -22,9 +23,9 @@
   --surface-hover: rgba(255, 255, 255, 0.7);
   --sidebar-gradient: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.8),
-    rgba(239, 246, 255, 0.9),
-    rgba(219, 234, 254, 0.8)
+    rgba(255, 255, 255, 0.52),
+    rgba(239, 246, 255, 0.42),
+    rgba(219, 234, 254, 0.35)
   );
   --sidebar-border: rgba(255, 255, 255, 0.4);
   --sidebar-border-strong: rgba(255, 255, 255, 0.5);
@@ -77,12 +78,13 @@
   --main-bg-color: #020817;
   --main-bg-image: none;
   --app-shell-gradient: linear-gradient(135deg, #0b1120 0%, #0f172a 45%, #111827 100%);
+  --app-shell-image: url('/Background.svg');
   --app-shell-radial-1: rgba(30, 41, 59, 0.8);
   --app-shell-radial-2: rgba(37, 99, 235, 0.18);
   --app-shell-radial-3: rgba(56, 189, 248, 0.12);
   --app-shell-dot: rgba(148, 163, 184, 0.2);
   --surface: rgba(15, 23, 42, 0.72);
-  --surface-strong: rgba(15, 23, 42, 0.9);
+  --surface-strong: rgba(15, 23, 42, 0.55);
   --surface-border: rgba(148, 163, 184, 0.2);
   --surface-border-strong: rgba(148, 163, 184, 0.28);
   --surface-shadow: 0 20px 50px rgba(2, 6, 23, 0.45);
@@ -90,9 +92,9 @@
   --surface-hover: rgba(30, 41, 59, 0.8);
   --sidebar-gradient: linear-gradient(
     to bottom,
-    rgba(15, 23, 42, 0.95),
-    rgba(17, 24, 39, 0.92),
-    rgba(15, 23, 42, 0.9)
+    rgba(15, 23, 42, 0.6),
+    rgba(17, 24, 39, 0.52),
+    rgba(15, 23, 42, 0.5)
   );
   --sidebar-border: rgba(148, 163, 184, 0.22);
   --sidebar-border-strong: rgba(148, 163, 184, 0.28);
@@ -145,12 +147,13 @@
   --main-bg-color: #f3f4f8;
   --main-bg-image: url('/main-section-bg.svg');
   --app-shell-gradient: linear-gradient(135deg, #f9fbff 0%, #eef4ff 45%, #e3edff 100%);
+  --app-shell-image: url('/Background.svg');
   --app-shell-radial-1: rgba(255, 255, 255, 0.95);
   --app-shell-radial-2: rgba(214, 230, 255, 0.6);
   --app-shell-radial-3: rgba(231, 240, 255, 0.75);
   --app-shell-dot: rgba(255, 255, 255, 0.6);
   --surface: rgba(255, 255, 255, 0.95);
-  --surface-strong: rgba(255, 255, 255, 0.98);
+  --surface-strong: rgba(255, 255, 255, 0.58);
   --surface-border: rgba(212, 226, 250, 0.85);
   --surface-border-strong: rgba(207, 222, 250, 0.9);
   --surface-shadow: 0 20px 50px rgba(120, 145, 200, 0.14);
@@ -158,9 +161,9 @@
   --surface-hover: rgba(244, 248, 255, 0.95);
   --sidebar-gradient: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.98),
-    rgba(240, 247, 255, 0.98),
-    rgba(228, 238, 255, 0.95)
+    rgba(255, 255, 255, 0.58),
+    rgba(240, 247, 255, 0.48),
+    rgba(228, 238, 255, 0.4)
   );
   --sidebar-border: rgba(206, 220, 245, 0.7);
   --sidebar-border-strong: rgba(206, 220, 245, 0.8);
@@ -222,7 +225,11 @@ body {
 .app-shell-bg {
   position: relative;
   isolation: isolate;
-  background: var(--app-shell-gradient);
+  background-color: var(--app-bg);
+  background-image: var(--app-shell-image), var(--app-shell-gradient);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .app-shell-bg::before {
@@ -266,6 +273,8 @@ body {
   background: var(--surface-strong);
   border-color: var(--surface-border-strong);
   box-shadow: var(--surface-shadow-strong);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
 }
 
 .dropdown-surface {
@@ -278,6 +287,8 @@ body {
   background: var(--sidebar-gradient);
   border-color: var(--sidebar-border);
   box-shadow: var(--sidebar-shadow);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
 
