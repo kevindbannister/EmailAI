@@ -10,6 +10,7 @@ type AppUserProfile = {
 };
 
 type AuthContextValue = {
+  hasSession: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   isBootstrapping: boolean;
@@ -41,33 +42,8 @@ export const MANUAL_AUTH_KEY = 'xproflow-manual-auth';
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const loadAppUserProfile = async (userId: string): Promise<AppUserProfile | null> => {
-  const selectProfile = async () => {
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, firm_id, role')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (error) {
-      throw new Error(error.message || 'Unable to load app user profile');
-    }
-
-    return (data as AppUserProfile | null) ?? null;
-  };
-
-  const immediateProfile = await selectProfile();
-  if (immediateProfile) {
-    return immediateProfile;
-  }
-
-  await delay(500);
-  return selectProfile();
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [hasSession, setHasSession] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [gmailConnected, setGmailConnected] = useState(false);
@@ -92,40 +68,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setManualAuth(false);
   }, []);
 
+  const resetSignedOutState = useCallback(() => {
+    setHasSession(false);
+    setIsAuthenticated(false);
+    setProfileReady(true);
+    setAppUserProfile(null);
+    setCsrfToken(undefined);
+    setGmailConnected(false);
+    setGmailEmail(undefined);
+    setSubscription(undefined);
+    setIsMasterUser(false);
+  }, []);
+
   const refreshSession = useCallback(async (options?: { background?: boolean }) => {
     const isBackgroundRefresh = options?.background ?? false;
     if (!isBackgroundRefresh) setIsLoading(true);
 
     try {
       const { data: sessionData } = await supabase.auth.getSession();
-      const hasSession = Boolean(sessionData.session);
-      const isManualSession = manualAuth && !hasSession;
+      const hasSupabaseSession = Boolean(sessionData.session);
+      const isManualSession = manualAuth && !hasSupabaseSession;
+      const hasActiveSession = hasSupabaseSession || isManualSession;
 
-      if (hasSession && manualAuth) {
+      setHasSession(hasActiveSession);
+
+      if (hasSupabaseSession && manualAuth) {
         clearManualAuth();
       }
 
-      let nextProfile: AppUserProfile | null = null;
-      if (sessionData.session?.user?.id) {
-        nextProfile = await loadAppUserProfile(sessionData.session.user.id);
-      }
+      const data = await api.get<MeResponse>('/api/me');
+      const nextProfile = hasActiveSession
+        ? ({
+            id: data.user?.id ?? sessionData.session?.user?.id ?? 'manual-user',
+            firm_id: null,
+            role: isManualSession ? 'master' : null,
+          } satisfies AppUserProfile)
+        : null;
 
-      if (hasSession && !nextProfile && !isManualSession) {
+      if (hasActiveSession && !nextProfile) {
         await supabase.auth.signOut({ scope: 'global' });
-        setIsAuthenticated(false);
-        setProfileReady(false);
-        setAppUserProfile(null);
-        setCsrfToken(undefined);
-        setGmailConnected(false);
-        setGmailEmail(undefined);
-        setSubscription(undefined);
-        setIsMasterUser(false);
+        resetSignedOutState();
         return;
       }
 
-      const data = await api.get<MeResponse>('/api/me');
-      setIsAuthenticated(data.authenticated || hasSession || isManualSession);
-      setProfileReady(isManualSession || !hasSession || Boolean(nextProfile));
+      setIsAuthenticated(data.authenticated || hasActiveSession);
+      setProfileReady(!hasActiveSession || Boolean(nextProfile));
       setAppUserProfile(nextProfile);
       setCsrfToken(data.csrfToken);
       setGmailConnected(Boolean(data.gmail?.connected));
@@ -135,19 +122,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (sessionError) {
       console.error('Failed to refresh application session state:', sessionError);
       const { data: sessionData } = await supabase.auth.getSession();
-      const hasSession = Boolean(sessionData.session);
-      setIsAuthenticated(hasSession || manualAuth);
-      setProfileReady(manualAuth && !hasSession);
-      setAppUserProfile(null);
-      setGmailConnected(false);
-      setGmailEmail(undefined);
-      setCsrfToken(undefined);
-      setSubscription(undefined);
-      setIsMasterUser(manualAuth && !hasSession);
+      const hasSupabaseSession = Boolean(sessionData.session);
+      const isManualSession = manualAuth && !hasSupabaseSession;
+      const hasActiveSession = hasSupabaseSession || isManualSession;
+
+      if (hasSupabaseSession && !isManualSession) {
+        await supabase.auth.signOut({ scope: 'global' });
+        resetSignedOutState();
+      } else {
+        setHasSession(hasActiveSession);
+        setIsAuthenticated(hasActiveSession);
+        setProfileReady(true);
+        setAppUserProfile(
+          isManualSession
+            ? {
+                id: 'manual-user',
+                firm_id: null,
+                role: 'master',
+              }
+            : null
+        );
+        setGmailConnected(false);
+        setGmailEmail(undefined);
+        setCsrfToken(undefined);
+        setSubscription(undefined);
+        setIsMasterUser(isManualSession);
+      }
     } finally {
       if (!isBackgroundRefresh) setIsLoading(false);
     }
-  }, [manualAuth, clearManualAuth]);
+  }, [manualAuth, clearManualAuth, resetSignedOutState]);
 
   useEffect(() => {
     void refreshSession();
@@ -163,9 +167,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(
     () => ({
+      hasSession,
       isAuthenticated,
       isLoading,
-      isBootstrapping: isLoading || (isAuthenticated && !profileReady),
+      isBootstrapping: isLoading || (hasSession && !profileReady),
       gmailConnected,
       gmailEmail,
       csrfToken,
@@ -188,26 +193,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await supabase.auth.signOut({ scope: 'global' });
         window.localStorage.setItem(MANUAL_AUTH_KEY, 'true');
         setManualAuth(true);
+        setHasSession(true);
         setIsMasterUser(true);
         setIsAuthenticated(true);
         setProfileReady(true);
-        setAppUserProfile(null);
+        setAppUserProfile({
+          id: 'manual-user',
+          firm_id: null,
+          role: 'master',
+        });
       },
       logout: async () => {
-        setIsAuthenticated(false);
-        setProfileReady(false);
-        setAppUserProfile(null);
-        setGmailConnected(false);
-        setGmailEmail(undefined);
-        setCsrfToken(undefined);
-        setSubscription(undefined);
-        setIsMasterUser(false);
         clearManualAuth();
+        resetSignedOutState();
         await supabase.auth.signOut({ scope: 'global' });
       },
       refreshSession,
     }),
-    [isAuthenticated, isLoading, profileReady, gmailConnected, gmailEmail, csrfToken, subscription, isMasterUser, appUserProfile, refreshSession, clearManualAuth]
+    [
+      hasSession,
+      isAuthenticated,
+      isLoading,
+      profileReady,
+      gmailConnected,
+      gmailEmail,
+      csrfToken,
+      subscription,
+      isMasterUser,
+      appUserProfile,
+      refreshSession,
+      clearManualAuth,
+      resetSignedOutState,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

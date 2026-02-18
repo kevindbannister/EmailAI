@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthContext';
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginWithManual } = useAuth();
+  const { loginWithManual, refreshSession } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -58,6 +58,7 @@ const Login = () => {
       return;
     }
 
+    await refreshSession();
     setError('');
     navigate('/dashboard');
   };
