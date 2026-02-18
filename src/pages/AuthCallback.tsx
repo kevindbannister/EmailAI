@@ -3,6 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 
+const waitForSession = async (timeoutMs = 4000) => {
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      throw error;
+    }
+    if (data.session) {
+      return data.session;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+
+  return null;
+};
+
 const AuthCallback = () => {
   const navigate = useNavigate();
   const { refreshSession } = useAuth();
@@ -14,7 +32,14 @@ const AuthCallback = () => {
 
       try {
         const searchParams = new URLSearchParams(window.location.search);
-        if (searchParams.get('error') || searchParams.get('error_description')) {
+        const hashParams = new URLSearchParams(window.location.hash.slice(1));
+
+        if (
+          searchParams.get('error') ||
+          searchParams.get('error_description') ||
+          hashParams.get('error') ||
+          hashParams.get('error_description')
+        ) {
           navigate('/login?error=oauth_callback', { replace: true });
           return;
         }
@@ -29,24 +54,9 @@ const AuthCallback = () => {
           }
         }
 
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error('OAuth callback session fetch failed:', error);
-          navigate('/login?error=oauth_callback', { replace: true });
-          return;
-        }
-
-        if (data?.session) {
+        const session = await waitForSession();
+        if (session) {
           setMsg('Signed in. Redirecting…');
-          await refreshSession();
-          navigate('/dashboard', { replace: true });
-          return;
-        }
-
-        setMsg('Finalising session…');
-        const retry = await supabase.auth.getSession();
-        if (retry.data?.session) {
           await refreshSession();
           navigate('/dashboard', { replace: true });
           return;
