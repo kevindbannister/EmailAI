@@ -280,6 +280,10 @@ body {
   box-shadow: var(--sidebar-shadow);
 }
 
+.sidebar-glass {
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
 
 .sidebar-shell {
   transition: width 180ms ease;

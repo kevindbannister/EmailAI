@@ -115,7 +115,7 @@ const Sidebar = () => {
   return (
     <aside
       className={classNames(
-        'sidebar-surface sidebar-shell fixed bottom-0 left-0 top-10 z-40 flex flex-col justify-between border-r py-2',
+        'sidebar-surface sidebar-shell sidebar-glass fixed bottom-0 left-0 top-10 z-40 flex flex-col justify-between border-r py-2',
         isCollapsed ? 'w-12 px-2' : 'w-44 px-2'
       )}
       data-collapsed={isCollapsed}
