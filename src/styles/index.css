@@ -253,7 +253,9 @@ body {
 }
 
 .app-main-bg {
+  margin-left: 11rem;
   background: transparent;
+  transition: margin-left 180ms ease;
 }
 
 .glass-card {
@@ -317,14 +319,12 @@ body {
   overflow: hidden;
 }
 
-.sidebar-shell[data-collapsed='false'] ~ main {
+.sidebar-shell[data-collapsed='false'] ~ .app-main-bg {
   margin-left: 11rem;
-  transition: margin-left 180ms ease;
 }
 
-.sidebar-shell[data-collapsed='true'] ~ main {
+.sidebar-shell[data-collapsed='true'] ~ .app-main-bg {
   margin-left: 3rem;
-  transition: margin-left 180ms ease;
 }
 
 .panel-surface {
