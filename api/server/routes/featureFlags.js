@@ -1,5 +1,9 @@
+const fs = require('fs/promises');
+const path = require('path');
 const { getUserFromRequest } = require('../auth/supabaseAuth');
 
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const STORE_PATH = path.join(DATA_DIR, 'featureFlags.json');
 const FEATURE_FLAGS_ROW_KEY = 'global';
 const FEATURE_FLAGS_TABLE = 'feature_flags';
 
@@ -56,7 +60,30 @@ const isMasterUserEmail = (email) => {
   return false;
 };
 
+async function readFlagsFromDisk() {
+  try {
+    const raw = await fs.readFile(STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    return normalizeFlags(parsed.flags || {});
+  } catch (_error) {
+    return { ...DEFAULT_FLAGS };
+  }
+}
+
+async function writeFlagsToDisk(flags) {
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(
+    STORE_PATH,
+    JSON.stringify({ flags, updatedAt: new Date().toISOString() }, null, 2),
+    'utf8'
+  );
+}
+
 async function loadFlagsFromSupabase(supabase) {
+  if (!supabase) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from(FEATURE_FLAGS_TABLE)
     .select('flags')
@@ -68,13 +95,17 @@ async function loadFlagsFromSupabase(supabase) {
   }
 
   if (!data || !data.flags || typeof data.flags !== 'object') {
-    return { ...DEFAULT_FLAGS };
+    return null;
   }
 
   return normalizeFlags(data.flags);
 }
 
 async function saveFlagsToSupabase(supabase, flags) {
+  if (!supabase) {
+    return false;
+  }
+
   const { error } = await supabase.from(FEATURE_FLAGS_TABLE).upsert(
     {
       id: FEATURE_FLAGS_ROW_KEY,
@@ -87,6 +118,35 @@ async function saveFlagsToSupabase(supabase, flags) {
   if (error) {
     throw error;
   }
+
+  return true;
+}
+
+async function loadFlags(supabase) {
+  try {
+    const supabaseFlags = await loadFlagsFromSupabase(supabase);
+    if (supabaseFlags) {
+      return supabaseFlags;
+    }
+  } catch (error) {
+    console.error('Failed to load feature flags from Supabase, falling back to disk:', error);
+  }
+
+  return readFlagsFromDisk();
+}
+
+async function saveFlags(flags, supabase) {
+  try {
+    const savedToSupabase = await saveFlagsToSupabase(supabase, flags);
+    if (savedToSupabase) {
+      return { source: 'supabase' };
+    }
+  } catch (error) {
+    console.error('Failed to save feature flags to Supabase, falling back to disk:', error);
+  }
+
+  await writeFlagsToDisk(flags);
+  return { source: 'disk' };
 }
 
 async function canManageFeatureFlags(req, supabase) {
@@ -106,11 +166,7 @@ async function canManageFeatureFlags(req, supabase) {
 function registerFeatureFlagRoutes(app, supabase) {
   app.get('/api/feature-flags', async (_req, res) => {
     try {
-      if (!supabase) {
-        throw new Error('Supabase client is required for feature flags persistence');
-      }
-
-      const flags = await loadFlagsFromSupabase(supabase);
+      const flags = await loadFlags(supabase);
       res.json({ flags });
     } catch (error) {
       console.error('Failed to load feature flags:', error);
@@ -126,10 +182,6 @@ function registerFeatureFlagRoutes(app, supabase) {
         return;
       }
 
-      if (!supabase) {
-        throw new Error('Supabase client is required for feature flags persistence');
-      }
-
       const incomingFlags = req.body?.flags;
       if (!incomingFlags || typeof incomingFlags !== 'object') {
         res.status(400).json({ error: 'Invalid flags payload' });
@@ -137,10 +189,9 @@ function registerFeatureFlagRoutes(app, supabase) {
       }
 
       const updatedFlags = normalizeFlags(incomingFlags);
+      const { source } = await saveFlags(updatedFlags, supabase);
 
-      await saveFlagsToSupabase(supabase, updatedFlags);
-
-      res.json({ flags: updatedFlags });
+      res.json({ flags: updatedFlags, persistedTo: source });
     } catch (error) {
       console.error('Failed to update feature flags:', error);
       res.status(500).json({ error: 'Failed to update feature flags' });
