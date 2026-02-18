@@ -276,13 +276,30 @@ body {
 
 .sidebar-surface {
   background: var(--sidebar-gradient);
-  border-color: var(--sidebar-border);
-  box-shadow: var(--sidebar-shadow);
+  border-color: var(--sidebar-border-strong);
+  box-shadow: var(--sidebar-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .sidebar-glass {
-  backdrop-filter: blur(18px) saturate(130%);
-  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+}
+
+.sidebar-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 40%, transparent 100%);
+  opacity: 0.9;
+}
+
+.sidebar-glass > * {
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-shell {
