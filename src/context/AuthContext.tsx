@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const hasSession = Boolean(sessionData.session);
       setHasSession(hasSession);
       setIsAuthenticated(hasSession || manualAuth);
-      setProfileReady(manualAuth && !hasSession);
+      setProfileReady(!hasSession);
       setAppUserProfile(null);
       setGmailConnected(false);
       setGmailEmail(undefined);

@@ -38,12 +38,16 @@ const AppBootGate = ({ children }: { children: ReactNode }) => {
 const RequireAuth = ({ children }: { children: ReactNode }) => {
   const { hasSession, isLoading, profileReady, appUserProfile } = useAuth();
 
-  if (isLoading || !profileReady) {
+  if (isLoading) {
     return <AppLoadingScreen />;
   }
 
   if (!hasSession) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!profileReady) {
+    return <AppLoadingScreen />;
   }
 
   if (!appUserProfile) {
