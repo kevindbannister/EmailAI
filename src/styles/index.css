@@ -7,7 +7,7 @@
   color-scheme: light;
   --app-bg: #e9f1ff;
   --main-bg-color: #f3f4f8;
-  --main-bg-image: url('/main-section-bg.svg');
+  --main-bg-image: url('/Background.svg');
   --app-shell-gradient: linear-gradient(135deg, #eef4ff 0%, #e1ebff 45%, #d7e6ff 100%);
   --app-shell-radial-1: rgba(255, 255, 255, 0.6);
   --app-shell-radial-2: rgba(188, 214, 255, 0.6);
@@ -143,7 +143,7 @@
   color-scheme: light;
   --app-bg: #f6f9ff;
   --main-bg-color: #f3f4f8;
-  --main-bg-image: url('/main-section-bg.svg');
+  --main-bg-image: url('/Background.svg');
   --app-shell-gradient: linear-gradient(135deg, #f9fbff 0%, #eef4ff 45%, #e3edff 100%);
   --app-shell-radial-1: rgba(255, 255, 255, 0.95);
   --app-shell-radial-2: rgba(214, 230, 255, 0.6);
