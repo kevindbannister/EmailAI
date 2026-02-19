@@ -167,6 +167,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [hydrateState]);
 
+
+
+  useEffect(() => {
+    console.log('[AppProvider] state snapshot', {
+      session: session?.user?.id ?? null,
+      profile: user,
+      firm,
+      loading,
+      error,
+    });
+  }, [session, user, firm, loading, error]);
+
   const value = useMemo(() => ({
     session,
     user,
@@ -178,6 +190,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       await hydrateState();
     },
   }), [session, user, firm, role, loading, error, hydrateState]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-slate-950 text-sm font-medium text-slate-100">
+        Preparing workspace…
+      </div>
+    );
+  }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
