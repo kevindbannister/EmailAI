@@ -22,38 +22,11 @@ import Inbox from './pages/Inbox';
 import Dashboard from './pages/Dashboard';
 import Billing from './pages/Billing';
 import { applyThemeMode, getInitialThemeMode } from './lib/theme';
-
-const AppLoadingScreen = () => (
-  <div className="flex min-h-screen w-full items-center justify-center bg-slate-950 text-sm font-medium text-slate-100">
-    Preparing workspace…
-  </div>
-);
+import { AppLoadingScreen, RequireAuth } from './components/auth/RequireAuth';
 
 const AppBootGate = ({ children }: { children: ReactNode }) => {
   const { isBootstrapping } = useAuth();
   if (isBootstrapping) return <AppLoadingScreen />;
-  return <>{children}</>;
-};
-
-const RequireAuth = ({ children }: { children: ReactNode }) => {
-  const { hasSession, isLoading, profileReady, appUserProfile } = useAuth();
-
-  if (isLoading) {
-    return <AppLoadingScreen />;
-  }
-
-  if (!hasSession) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!profileReady) {
-    return <AppLoadingScreen />;
-  }
-
-  if (!appUserProfile) {
-    return <Navigate to="/login" replace />;
-  }
-
   return <>{children}</>;
 };
 
